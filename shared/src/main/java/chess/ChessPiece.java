@@ -69,17 +69,6 @@ public class ChessPiece {
                     offset++;
                 }
 
-                // up and to the left
-                offset = 1;
-                while (myPosition.getRow() + offset <= 8 && myPosition.getColumn() - offset >= 1) {
-                    if (board.getPiece(myPosition) != null) {
-                        validMoves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + offset, myPosition.getColumn() - offset), PieceType.BISHOP));
-                    } else {
-                        break;
-                    }
-                    offset++;
-                }
-
                 // down and to the right
                 offset = 1;
                 while (myPosition.getRow() - offset >= 1 && myPosition.getColumn() + offset <= 8) {
@@ -96,6 +85,17 @@ public class ChessPiece {
                 while (myPosition.getRow() - offset >= 1 && myPosition.getColumn() - offset >= 1) {
                     if (board.getPiece(myPosition) != null) {
                         validMoves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - offset, myPosition.getColumn() - offset), PieceType.BISHOP));
+                    } else {
+                        break;
+                    }
+                    offset++;
+                }
+
+                // up and to the left
+                offset = 1;
+                while (myPosition.getRow() + offset <= 8 && myPosition.getColumn() - offset >= 1) {
+                    if (board.getPiece(myPosition) != null) {
+                        validMoves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + offset, myPosition.getColumn() - offset), PieceType.BISHOP));
                     } else {
                         break;
                     }
