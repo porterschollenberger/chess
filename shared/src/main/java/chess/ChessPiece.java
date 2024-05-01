@@ -61,7 +61,7 @@ public class ChessPiece {
                 int offset = 1;
                 while (myPosition.getRow() + offset <= 8 && myPosition.getColumn() + offset <= 8) {
                     if (board.getPiece(myPosition) != null) {
-                        validMoves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + offset, myPosition.getColumn() + offset), PieceType.BISHOP));
+                        validMoves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + offset, myPosition.getColumn() + offset), null));
                     } else {
                         // blocked so can't go further
                         break;
@@ -73,7 +73,7 @@ public class ChessPiece {
                 offset = 1;
                 while (myPosition.getRow() - offset >= 1 && myPosition.getColumn() + offset <= 8) {
                     if (board.getPiece(myPosition) != null) {
-                        validMoves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - offset, myPosition.getColumn() + offset), PieceType.BISHOP));
+                        validMoves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - offset, myPosition.getColumn() + offset), null));
                     } else {
                         break;
                     }
@@ -84,7 +84,7 @@ public class ChessPiece {
                 offset = 1;
                 while (myPosition.getRow() - offset >= 1 && myPosition.getColumn() - offset >= 1) {
                     if (board.getPiece(myPosition) != null) {
-                        validMoves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - offset, myPosition.getColumn() - offset), PieceType.BISHOP));
+                        validMoves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - offset, myPosition.getColumn() - offset), null));
                     } else {
                         break;
                     }
@@ -95,7 +95,7 @@ public class ChessPiece {
                 offset = 1;
                 while (myPosition.getRow() + offset <= 8 && myPosition.getColumn() - offset >= 1) {
                     if (board.getPiece(myPosition) != null) {
-                        validMoves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + offset, myPosition.getColumn() - offset), PieceType.BISHOP));
+                        validMoves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + offset, myPosition.getColumn() - offset), null));
                     } else {
                         break;
                     }
