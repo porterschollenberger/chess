@@ -3,11 +3,11 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class BishopMovesCalculator {
+public class RookMovesCalculator {
     private final ChessBoard board;
     private final ChessPosition myPosition;
 
-    public BishopMovesCalculator(ChessBoard board, ChessPosition myPosition) {
+    public RookMovesCalculator(ChessBoard board, ChessPosition myPosition) {
         this.board=board;
         this.myPosition=myPosition;
     }
@@ -16,8 +16,8 @@ public class BishopMovesCalculator {
         return row >= 1 && row <= 8 && col >= 1 && col <= 8;
     }
 
-    private Collection<ChessMove> getDiagonalMoves(int rowDirection, int colDirection) {
-        ArrayList<ChessMove> diagonalMoves = new ArrayList<>();
+    private Collection<ChessMove> getHorizontalMoves(int rowDirection, int colDirection) {
+        ArrayList<ChessMove> horizontalMoves = new ArrayList<>();
 
         int offset = 1;
         while (isWithinBounds(myPosition.getRow() + offset * rowDirection, myPosition.getColumn() + offset * colDirection)) {
@@ -25,26 +25,26 @@ public class BishopMovesCalculator {
             ChessPiece pieceAtPosition = board.getPiece(possiblePosition);
 
             if (pieceAtPosition == null) {
-                diagonalMoves.add(new ChessMove(myPosition, possiblePosition, null));
+                horizontalMoves.add(new ChessMove(myPosition, possiblePosition, null));
             } else {
                 if (pieceAtPosition.getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
-                    diagonalMoves.add(new ChessMove(myPosition, possiblePosition, null));
+                    horizontalMoves.add(new ChessMove(myPosition, possiblePosition, null));
                 }
                 break;
             }
             offset++;
         }
 
-        return diagonalMoves;
+        return horizontalMoves;
     }
 
-    public Collection<ChessMove> calculateBishopMoves() {
+    public Collection<ChessMove> calculateRookMoves() {
         ArrayList<ChessMove> validMoves = new ArrayList<>();
 
-        validMoves.addAll(getDiagonalMoves(1,1));
-        validMoves.addAll(getDiagonalMoves(-1,1));
-        validMoves.addAll(getDiagonalMoves(-1,-1));
-        validMoves.addAll(getDiagonalMoves(1,-1));
+        validMoves.addAll(getHorizontalMoves(1, 0));
+        validMoves.addAll(getHorizontalMoves(-1, 0));
+        validMoves.addAll(getHorizontalMoves(0, 1));
+        validMoves.addAll(getHorizontalMoves(0, -1));
 
         return validMoves;
     }

@@ -56,6 +56,8 @@ public class ChessPiece {
         switch (board.getPiece(myPosition).getPieceType()) {
             case BISHOP:
                 return new BishopMovesCalculator(board, myPosition).calculateBishopMoves();
+            case ROOK:
+                return new RookMovesCalculator(board, myPosition).calculateRookMoves();
             default:
                 return new ArrayList<>();
         }
