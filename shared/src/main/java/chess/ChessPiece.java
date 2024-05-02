@@ -63,8 +63,11 @@ public class ChessPiece {
                     ChessPosition possiblePosition = new ChessPosition(myPosition.getRow() + offset, myPosition.getColumn() + offset);
                     if (board.getPiece(possiblePosition) == null) {
                         validMoves.add(new ChessMove(myPosition, possiblePosition, null));
+                    } else if (board.getPiece(possiblePosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                        validMoves.add(new ChessMove(myPosition, possiblePosition, null));
+                        break;
                     } else {
-                        // blocked so can't go further
+                        // blocked by team
                         break;
                     }
                     offset++;
@@ -76,6 +79,9 @@ public class ChessPiece {
                     ChessPosition possiblePosition = new ChessPosition(myPosition.getRow() - offset, myPosition.getColumn() + offset);
                     if (board.getPiece(possiblePosition) == null) {
                         validMoves.add(new ChessMove(myPosition, possiblePosition, null));
+                    } else if (board.getPiece(possiblePosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                        validMoves.add(new ChessMove(myPosition, possiblePosition, null));
+                        break;
                     } else {
                         break;
                     }
@@ -88,6 +94,9 @@ public class ChessPiece {
                     ChessPosition possiblePosition = new ChessPosition(myPosition.getRow() - offset, myPosition.getColumn() - offset);
                     if (board.getPiece(possiblePosition) == null) {
                         validMoves.add(new ChessMove(myPosition, possiblePosition, null));
+                    } else if (board.getPiece(possiblePosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                        validMoves.add(new ChessMove(myPosition, possiblePosition, null));
+                        break;
                     } else {
                         break;
                     }
@@ -100,6 +109,9 @@ public class ChessPiece {
                     ChessPosition possiblePosition = new ChessPosition(myPosition.getRow() + offset, myPosition.getColumn() - offset);
                     if (board.getPiece(possiblePosition) == null) {
                         validMoves.add(new ChessMove(myPosition, possiblePosition, null));
+                    } else if (board.getPiece(possiblePosition).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                        validMoves.add(new ChessMove(myPosition, possiblePosition, null));
+                        break;
                     } else {
                         break;
                     }
