@@ -35,7 +35,7 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return pieceColor;
     }
 
     /**
@@ -60,8 +60,9 @@ public class ChessPiece {
                 // up and to the right
                 int offset = 1;
                 while (myPosition.getRow() + offset <= 8 && myPosition.getColumn() + offset <= 8) {
-                    if (board.getPiece(myPosition) != null) {
-                        validMoves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + offset, myPosition.getColumn() + offset), null));
+                    ChessPosition possiblePosition = new ChessPosition(myPosition.getRow() + offset, myPosition.getColumn() + offset);
+                    if (board.getPiece(possiblePosition) == null) {
+                        validMoves.add(new ChessMove(myPosition, possiblePosition, null));
                     } else {
                         // blocked so can't go further
                         break;
@@ -72,8 +73,9 @@ public class ChessPiece {
                 // down and to the right
                 offset = 1;
                 while (myPosition.getRow() - offset >= 1 && myPosition.getColumn() + offset <= 8) {
-                    if (board.getPiece(myPosition) != null) {
-                        validMoves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - offset, myPosition.getColumn() + offset), null));
+                    ChessPosition possiblePosition = new ChessPosition(myPosition.getRow() - offset, myPosition.getColumn() + offset);
+                    if (board.getPiece(possiblePosition) == null) {
+                        validMoves.add(new ChessMove(myPosition, possiblePosition, null));
                     } else {
                         break;
                     }
@@ -83,8 +85,9 @@ public class ChessPiece {
                 // down and to the left
                 offset = 1;
                 while (myPosition.getRow() - offset >= 1 && myPosition.getColumn() - offset >= 1) {
-                    if (board.getPiece(myPosition) != null) {
-                        validMoves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() - offset, myPosition.getColumn() - offset), null));
+                    ChessPosition possiblePosition = new ChessPosition(myPosition.getRow() - offset, myPosition.getColumn() - offset);
+                    if (board.getPiece(possiblePosition) == null) {
+                        validMoves.add(new ChessMove(myPosition, possiblePosition, null));
                     } else {
                         break;
                     }
@@ -94,8 +97,9 @@ public class ChessPiece {
                 // up and to the left
                 offset = 1;
                 while (myPosition.getRow() + offset <= 8 && myPosition.getColumn() - offset >= 1) {
-                    if (board.getPiece(myPosition) != null) {
-                        validMoves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + offset, myPosition.getColumn() - offset), null));
+                    ChessPosition possiblePosition = new ChessPosition(myPosition.getRow() + offset, myPosition.getColumn() - offset);
+                    if (board.getPiece(possiblePosition) == null) {
+                        validMoves.add(new ChessMove(myPosition, possiblePosition, null));
                     } else {
                         break;
                     }
