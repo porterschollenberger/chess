@@ -82,6 +82,8 @@ public class ChessPiece {
                 return new RookMovesCalculator(board, myPosition).calculateRookMoves();
             case QUEEN:
                 return new QueenMovesCalculator(board, myPosition).calculateQueenMoves();
+            case KING:
+                return new KingMovesCalculator(board, myPosition).calculateKingMoves();
             default:
                 return new ArrayList<>();
         }
