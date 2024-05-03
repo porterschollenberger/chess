@@ -37,6 +37,14 @@ public class PawnMovesCalculator {
         return atStartSquare && firstSquareFree;
     }
 
+    private Collection<ChessMove> addAllPromotionPieces(Collection<ChessMove> validMoves, ChessPosition possiblePosition) {
+        validMoves.add(new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.QUEEN));
+        validMoves.add(new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.ROOK));
+        validMoves.add(new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.BISHOP));
+        validMoves.add(new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.KNIGHT));
+        return validMoves;
+    }
+
     private Collection<ChessMove> getForwardMoves(int rowDirection, int rowDistance) {
         ArrayList<ChessMove> validMoves = new ArrayList<>();
 
@@ -46,7 +54,7 @@ public class PawnMovesCalculator {
 
             if (pieceAtPosition == null) {
                 if (canPromote(possiblePosition)) {
-                    validMoves.add(new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.QUEEN));
+                    addAllPromotionPieces(validMoves, possiblePosition);
                 } else {
                     validMoves.add(new ChessMove(myPosition, possiblePosition, null));
                 }
@@ -65,7 +73,7 @@ public class PawnMovesCalculator {
 
             if (pieceAtPosition != null && pieceAtPosition.getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
                 if (canPromote(possiblePosition)) {
-                    validMoves.add(new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.QUEEN));
+                    addAllPromotionPieces(validMoves, possiblePosition);
                 } else {
                     validMoves.add(new ChessMove(myPosition, possiblePosition, null));
                 }
