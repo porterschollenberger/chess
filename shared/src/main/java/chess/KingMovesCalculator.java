@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class KingMovesCalculator {
-    private ChessBoard board;
-    private ChessPosition myPosition;
+    private final ChessBoard board;
+    private final ChessPosition myPosition;
 
     public KingMovesCalculator(ChessBoard board, ChessPosition myPosition) {
         this.board=board;

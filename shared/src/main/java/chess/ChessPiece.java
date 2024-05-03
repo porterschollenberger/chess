@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -75,21 +74,13 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        switch (board.getPiece(myPosition).getPieceType()) {
-            case BISHOP:
-                return new BishopMovesCalculator(board, myPosition).calculateBishopMoves();
-            case ROOK:
-                return new RookMovesCalculator(board, myPosition).calculateRookMoves();
-            case QUEEN:
-                return new QueenMovesCalculator(board, myPosition).calculateQueenMoves();
-            case KING:
-                return new KingMovesCalculator(board, myPosition).calculateKingMoves();
-            case KNIGHT:
-                return new KnightMovesCalculator(board, myPosition).calculateKnightMoves();
-            case PAWN:
-                return new PawnMovesCalculator(board, myPosition).calculatePawnMoves();
-            default:
-                return new ArrayList<>();
-        }
+        return switch (board.getPiece(myPosition).getPieceType()) {
+            case BISHOP -> new BishopMovesCalculator(board, myPosition).calculateBishopMoves();
+            case ROOK -> new RookMovesCalculator(board, myPosition).calculateRookMoves();
+            case QUEEN -> new QueenMovesCalculator(board, myPosition).calculateQueenMoves();
+            case KING -> new KingMovesCalculator(board, myPosition).calculateKingMoves();
+            case KNIGHT -> new KnightMovesCalculator(board, myPosition).calculateKnightMoves();
+            case PAWN -> new PawnMovesCalculator(board, myPosition).calculatePawnMoves();
+        };
     }
 }
