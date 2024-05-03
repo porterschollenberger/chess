@@ -37,12 +37,11 @@ public class PawnMovesCalculator {
         return atStartSquare && firstSquareFree;
     }
 
-    private Collection<ChessMove> addAllPromotionPieces(Collection<ChessMove> validMoves, ChessPosition possiblePosition) {
+    private void addAllPromotionPieces(Collection<ChessMove> validMoves, ChessPosition possiblePosition) {
         validMoves.add(new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.QUEEN));
         validMoves.add(new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.ROOK));
         validMoves.add(new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.BISHOP));
         validMoves.add(new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.KNIGHT));
-        return validMoves;
     }
 
     private Collection<ChessMove> getForwardMoves(int rowDirection, int rowDistance) {
@@ -100,7 +99,6 @@ public class PawnMovesCalculator {
             validMoves.addAll(getDiagonalMoves(-1,1));
             validMoves.addAll(getDiagonalMoves(-1,-1));
         }
-
 
         return validMoves;
     }
