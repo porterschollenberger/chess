@@ -115,8 +115,8 @@ public class ChessGame {
                 ChessPosition currentPosition = new ChessPosition(i,j);
                 ChessPiece currentPiece = board.getPiece(currentPosition);
 
-                if (currentPiece != null) {
-                    Collection<ChessMove> currentMoves=currentPiece.pieceMoves(board, currentPosition);
+                if (currentPiece != null && currentPiece.getTeamColor() != teamColor) {
+                    Collection<ChessMove> currentMoves = currentPiece.pieceMoves(board, currentPosition);
 
                     for (ChessMove move : currentMoves) {
                         if (move.getEndPosition().equals(kingPosition)) return true;
@@ -134,7 +134,32 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        return false;
+        if (isInCheck(teamColor)) {
+            for (int i = 1; i <= 8; i++) {
+                for (int j=1; j <= 8; j++) {
+                    ChessPosition currentPosition = new ChessPosition(i, j);
+                    ChessPiece currentPiece = board.getPiece(currentPosition);
+
+                    if (currentPiece != null && currentPiece.getTeamColor() == teamColor) {
+                        Collection<ChessMove> currentMoves = currentPiece.pieceMoves(board, currentPosition);
+
+                        for (ChessMove move : currentMoves) {
+                            ChessBoard boardCopy = board.makeCopy();
+                            boardCopy.addPiece(move.getEndPosition(), currentPiece);
+                            boardCopy.addPiece(move.getStartPosition(), null);
+                            ChessGame testGame = new ChessGame();
+                            testGame.setBoard(boardCopy);
+                            if (!testGame.isInCheck(teamColor)) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
