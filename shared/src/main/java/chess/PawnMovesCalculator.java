@@ -30,7 +30,7 @@ public class PawnMovesCalculator {
                 firstSquareFree = true;
             }
         } else {
-            if (board.getPiece(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn())) == null) {
+            if (atStartSquare && board.getPiece(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn())) == null) {
                 firstSquareFree = true;
             }
         }
