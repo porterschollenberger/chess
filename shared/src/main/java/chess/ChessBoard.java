@@ -9,9 +9,9 @@ import java.util.Arrays;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private final ChessPiece[][] board = new ChessPiece[8][8];
+    private final ChessPiece[][] board;
     public ChessBoard() {
-
+        this.board = new ChessPiece[8][8];
     }
 
     @Override
@@ -58,6 +58,16 @@ public class ChessBoard {
         return board[position.getRow() - 1][position.getColumn() - 1];
     }
 
+    public ChessBoard makeCopy() {
+        ChessBoard boardCopy = new ChessBoard();
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                boardCopy.addPiece(new ChessPosition(i,j), this.getPiece(new ChessPosition(i,j)));
+            }
+        }
+        return boardCopy;
+    }
+
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
@@ -90,6 +100,5 @@ public class ChessBoard {
         for (int i = 1; i <= 8; i++) {
             addPiece(new ChessPosition(7,i), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
         }
-
     }
 }
