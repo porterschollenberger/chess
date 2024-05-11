@@ -87,7 +87,11 @@ public class ChessGame {
         boolean valid = false;
         for (ChessMove checkMove : validatedMoves) {
             if (checkMove.equals(move)) {
-                board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
+                ChessPiece promotionPiece = board.getPiece(move.getStartPosition());
+                if (move.getPromotionPiece() != null) {
+                    promotionPiece = new ChessPiece(promotionPiece.getTeamColor(), move.getPromotionPiece());
+                }
+                board.addPiece(move.getEndPosition(), promotionPiece);
                 board.addPiece(move.getStartPosition(), null);
                 valid = true;
                 break;
