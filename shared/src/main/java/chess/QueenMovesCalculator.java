@@ -17,7 +17,6 @@ public class QueenMovesCalculator {
 
         CalculatorHelper calculator = new CalculatorHelper(board, myPosition);
         validMoves.addAll(calculator.calculateValidMovesMulti(1,0)); // up
-        validMoves.addAll(calculator.calculateValidMovesMulti(1,0)); // up
         validMoves.addAll(calculator.calculateValidMovesMulti(-1,0)); // down
         validMoves.addAll(calculator.calculateValidMovesMulti(0,-1)); // left
         validMoves.addAll(calculator.calculateValidMovesMulti(0,1)); // right
