@@ -81,8 +81,8 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (board.getPiece(move.getStartPosition()) == null) throw new InvalidMoveException();
-        if (!turn.equals(board.getPiece(move.getStartPosition()).getTeamColor())) throw new InvalidMoveException();
+        if (board.getPiece(move.getStartPosition()) == null) throw new InvalidMoveException("No piece");
+        if (!turn.equals(board.getPiece(move.getStartPosition()).getTeamColor())) throw new InvalidMoveException("Wrong turn");
         ArrayList<ChessMove> validatedMoves = new ArrayList<>(validMoves(move.getStartPosition()));
         boolean valid = false;
         for (ChessMove checkMove : validatedMoves) {
@@ -93,7 +93,9 @@ public class ChessGame {
                 break;
             }
         }
-        if (!valid) throw new InvalidMoveException();
+        if (!valid) throw new InvalidMoveException("Invalid move");
+        if (turn.equals(TeamColor.WHITE)) turn = TeamColor.BLACK;
+        else if (turn.equals(TeamColor.BLACK)) turn = TeamColor.WHITE;
     }
 
     private ChessPosition findTheKing(TeamColor teamColor) {
