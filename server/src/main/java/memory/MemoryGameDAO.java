@@ -10,24 +10,25 @@ import java.util.HashMap;
 
 public class MemoryGameDAO implements GameDAO {
     private final HashMap<Integer, GameData> gameMap;
-    private static int counter = 0;
-    public final int gameID;
+    private int gameID;
 
     public MemoryGameDAO() {
         this.gameMap = new HashMap<>();
-        this.gameID = counter++;
+        this.gameID = 1;
     }
 
     @Override
-    public void createGame(String gameName) {
+    public int createGame(String gameName) {
         gameMap.put(gameID, new GameData(gameID, null, null, gameName, new ChessGame()));
+        gameID++;
+        return gameID - 1;
     }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
         GameData game = gameMap.get(gameID);
         if (game == null) {
-            throw new DataAccessException("gameID " + gameID + "does not exist.");
+            throw new DataAccessException("gameID " + gameID + " does not exist.");
         }
         return game;
     }
@@ -41,7 +42,7 @@ public class MemoryGameDAO implements GameDAO {
     public void updateGame(int gameID, String playerColorField, String username) throws DataAccessException {
         GameData game = gameMap.get(gameID);
         if (game == null) {
-            throw new DataAccessException("gameID " + gameID + "does not exist.");
+            throw new DataAccessException("gameID " + gameID + " does not exist.");
         }
         GameData updatedGame = switch (playerColorField) {
             case "whiteUsername" ->
@@ -56,7 +57,7 @@ public class MemoryGameDAO implements GameDAO {
     public void updateGame(int gameID, ChessGame newChessGame) throws DataAccessException {
         GameData game = gameMap.get(gameID);
         if (game == null) {
-            throw new DataAccessException("gameID " + gameID + "does not exist.");
+            throw new DataAccessException("gameID " + gameID + " does not exist.");
         }
         GameData updatedGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), newChessGame);
         gameMap.replace(gameID, updatedGame);
