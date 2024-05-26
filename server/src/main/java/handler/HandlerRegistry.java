@@ -1,7 +1,7 @@
 package handler;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
+import dataaccess.*;
 import request.*;
 import response.*;
 import service.*;
@@ -34,8 +34,14 @@ public class HandlerRegistry {
                 AuthData authData = userService.register(user);
                 res.status(200);
                 return gson.toJson(new RegisterResponse(authData.username(), authData.authToken()));
-            } catch (DataAccessException e) {
+            } catch (BadRequestException e) {
                 res.status(400);
+                return gson.toJson(new RegisterResponse("Error: " + e.getMessage()));
+            } catch (AlreadyTakenException e) {
+                res.status(403);
+                return gson.toJson(new RegisterResponse("Error: " + e.getMessage()));
+            } catch (DataAccessException e) {
+                res.status(500);
                 return gson.toJson(new RegisterResponse("Error: " + e.getMessage()));
             }
         });
@@ -46,8 +52,11 @@ public class HandlerRegistry {
                 AuthData authData = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
                 res.status(200);
                 return gson.toJson(new LoginResponse(authData.username(), authData.authToken()));
-            } catch (DataAccessException e) {
+            } catch (UnauthorizedException e) {
                 res.status(401);
+                return gson.toJson(new LoginResponse("Error: " + e.getMessage()));
+            } catch (DataAccessException e) {
+                res.status(500);
                 return gson.toJson(new LoginResponse("Error: " + e.getMessage()));
             }
         });
@@ -58,8 +67,11 @@ public class HandlerRegistry {
                 userService.logout(authToken);
                 res.status(200);
                 return gson.toJson(new GenericResponse());
-            } catch (DataAccessException e) {
+            } catch (BadRequestException e) {
                 res.status(401);
+                return gson.toJson(new GenericResponse("Error: " + e.getMessage()));
+            } catch (DataAccessException e) {
+                res.status(500);
                 return gson.toJson(new GenericResponse("Error: " + e.getMessage()));
             }
         });
@@ -70,8 +82,11 @@ public class HandlerRegistry {
                 Collection<GameData> games = gameService.listGames(authToken);
                 res.status(200);
                 return gson.toJson(new ListGamesResponse(games));
-            } catch (DataAccessException e) {
+            } catch (UnauthorizedException e) {
                 res.status(401);
+                return gson.toJson(new ListGamesResponse("Error: " + e.getMessage()));
+            } catch (DataAccessException e) {
+                res.status(500);
                 return gson.toJson(new ListGamesResponse("Error: " + e.getMessage()));
             }
         });
@@ -84,8 +99,14 @@ public class HandlerRegistry {
                 GameData game = gameService.createGame(authToken, gameName);
                 res.status(200);
                 return gson.toJson(new CreateGameResponse(game.gameID()));
-            } catch (DataAccessException e) {
+            } catch (BadRequestException e) {
+                res.status(400);
+                return gson.toJson(new CreateGameResponse("Error: " + e.getMessage()));
+            } catch (UnauthorizedException e) {
                 res.status(401);
+                return gson.toJson(new CreateGameResponse("Error: " + e.getMessage()));
+            } catch (DataAccessException e) {
+                res.status(500);
                 return gson.toJson(new CreateGameResponse("Error: " + e.getMessage()));
             }
         });
@@ -99,8 +120,17 @@ public class HandlerRegistry {
                 gameService.joinGame(authToken, playerColor, gameId);
                 res.status(200);
                 return gson.toJson(new GenericResponse());
-            } catch (DataAccessException e) {
+            } catch (BadRequestException e) {
+                res.status(400);
+                return gson.toJson(new GenericResponse("Error: " + e.getMessage()));
+            } catch (UnauthorizedException e) {
                 res.status(401);
+                return gson.toJson(new GenericResponse("Error: " + e.getMessage()));
+            } catch (AlreadyTakenException e) {
+                res.status(403);
+                return gson.toJson(new GenericResponse("Error: " + e.getMessage()));
+            } catch (DataAccessException e) {
+                res.status(500);
                 return gson.toJson(new GenericResponse("Error: " + e.getMessage()));
             }
         });
