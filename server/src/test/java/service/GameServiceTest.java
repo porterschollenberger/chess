@@ -21,7 +21,7 @@ class GameServiceTest {
     }
 
     @Test
-    void testListGames_Success() throws DataAccessException {
+    void testListGamesSuccess() throws DataAccessException {
         String authToken = authDAO.createAuth("test username");
 
         var games = gameService.listGames(authToken);
@@ -30,14 +30,14 @@ class GameServiceTest {
     }
 
     @Test
-    void testListGames_Failure() {
+    void testListGamesFailure() {
         String authToken = "invalid auth";
 
         assertThrows(DataAccessException.class, () -> gameService.listGames(authToken));
     }
 
     @Test
-    void testCreateGame_Success() throws DataAccessException {
+    void testCreateGameSuccess() throws DataAccessException {
         String authToken = authDAO.createAuth("test username");
         String gameName = "test game name";
 
@@ -47,7 +47,7 @@ class GameServiceTest {
     }
 
     @Test
-    void testCreateGame_Failure() {
+    void testCreateGameFailure() {
         String authToken = "invalid auth";
         String gameName = "test game name";
 
@@ -55,7 +55,7 @@ class GameServiceTest {
     }
 
     @Test
-    void testJoinGame_Success() throws DataAccessException {
+    void testJoinGameSuccess() throws DataAccessException {
         String authToken = authDAO.createAuth("test username");
         String playerColor = "WHITE";
         int gameID = gameDAO.createGame("test game name");
@@ -67,7 +67,7 @@ class GameServiceTest {
     }
 
     @Test
-    void testJoinGame_Failure() {
+    void testJoinGameFailure() {
         String authToken = "invalid auth";
         String playerColor = "WHITE";
         int gameID = gameDAO.createGame("test game name");

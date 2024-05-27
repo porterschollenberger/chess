@@ -25,7 +25,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testRegister_Success() throws DataAccessException {
+    void testRegisterSuccess() throws DataAccessException {
         UserData userData = new UserData("username", "password", "email");
 
         AuthData auth = userService.register(userData);
@@ -34,14 +34,14 @@ class UserServiceTest {
     }
 
     @Test
-    void testRegister_Failure() {
+    void testRegisterFailure() {
         UserData badUserData = new UserData(null, null, null);
 
         assertThrows(DataAccessException.class, () -> userService.register(badUserData));
     }
 
     @Test
-    void testLogin_Success() throws DataAccessException {
+    void testLoginSuccess() throws DataAccessException {
         String username = "test username";
         String password = "test password";
         String email = "test email";
@@ -55,7 +55,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testLogin_Failure() {
+    void testLoginFailure() {
         String username = "test username";
         String password = "test password";
         String email = "test email";
@@ -67,7 +67,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testLogout_Success() throws DataAccessException {
+    void testLogoutSuccess() throws DataAccessException {
         String username = "test username";
         String auth = authDAO.createAuth(username);
 
@@ -77,7 +77,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testLogout_Failure() {
+    void testLogoutFailure() {
         String auth = "invalid auth";
 
         assertThrows(DataAccessException.class, () -> userService.logout(auth));

@@ -25,7 +25,7 @@ class ClearServiceTest {
     }
 
     @Test
-    void testClear_Success() {
+    void testClearSuccess() {
         authDAO.createAuth("test username");
         gameDAO.createGame("game name");
         userDAO.createUser(new UserData("username", "password", "email"));

@@ -15,7 +15,7 @@ public class HandlerRegistry {
     private final Map<String, JsonHandler> handlers = new HashMap<>();
     private final Gson gson = new Gson();
 
-    public HandlerRegistry(ClearService clearService, GameService gameService, UserService userService) {
+    private void clearHandler(ClearService clearService) {
         handlers.put("clear", (req, res) -> {
             try {
                 clearService.clear();
@@ -26,7 +26,9 @@ public class HandlerRegistry {
                 return gson.toJson(new GenericResponse("Error: " + e.getMessage()));
             }
         });
+    }
 
+    private void registerHandler(UserService userService) {
         handlers.put("register", (req, res) -> {
             try {
                 RegisterRequest registerRequest = gson.fromJson(req.body(), RegisterRequest.class);
@@ -45,7 +47,9 @@ public class HandlerRegistry {
                 return gson.toJson(new RegisterResponse("Error: " + e.getMessage()));
             }
         });
+    }
 
+    private void loginHandler(UserService userService) {
         handlers.put("login", (req, res) -> {
             try {
                 LoginRequest loginRequest = gson.fromJson(req.body(), LoginRequest.class);
@@ -60,7 +64,9 @@ public class HandlerRegistry {
                 return gson.toJson(new LoginResponse("Error: " + e.getMessage()));
             }
         });
+    }
 
+    private void logoutHander(UserService userService) {
         handlers.put("logout", (req, res) -> {
             try {
                 String authToken = req.headers("authorization");
@@ -75,7 +81,9 @@ public class HandlerRegistry {
                 return gson.toJson(new GenericResponse("Error: " + e.getMessage()));
             }
         });
+    }
 
+    private void listGamesHandler(GameService gameService) {
         handlers.put("listGames", (req, res) -> {
             try {
                 String authToken = req.headers("authorization");
@@ -90,7 +98,9 @@ public class HandlerRegistry {
                 return gson.toJson(new ListGamesResponse("Error: " + e.getMessage()));
             }
         });
+    }
 
+    private void createGameHandler(GameService gameService) {
         handlers.put("createGame", (req, res) -> {
             try {
                 String authToken = req.headers("authorization");
@@ -110,7 +120,9 @@ public class HandlerRegistry {
                 return gson.toJson(new CreateGameResponse("Error: " + e.getMessage()));
             }
         });
+    }
 
+    private void joinGameService(GameService gameService) {
         handlers.put("joinGame", (req, res) -> {
             try {
                 String authToken = req.headers("authorization");
@@ -134,6 +146,16 @@ public class HandlerRegistry {
                 return gson.toJson(new GenericResponse("Error: " + e.getMessage()));
             }
         });
+    }
+
+    public HandlerRegistry(ClearService clearService, GameService gameService, UserService userService) {
+        clearHandler(clearService);
+        registerHandler(userService);
+        loginHandler(userService);
+        logoutHander(userService);
+        listGamesHandler(gameService);
+        createGameHandler(gameService);
+        joinGameService(gameService);
     }
 
     public JsonHandler getHandler(String action) {
