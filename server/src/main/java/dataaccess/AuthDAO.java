@@ -10,4 +10,6 @@ public interface AuthDAO {
     void deleteAuth(String authToken);
 
     void clear();
+
+    boolean isEmpty();
 }

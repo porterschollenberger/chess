@@ -17,4 +17,6 @@ public interface GameDAO {
     void updateGame(int gameID, ChessGame newChessGame);
 
     void clear();
+
+    boolean isEmpty();
 }

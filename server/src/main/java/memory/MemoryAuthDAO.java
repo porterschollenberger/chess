@@ -34,4 +34,8 @@ public class MemoryAuthDAO implements AuthDAO {
     public void clear() {
         authMap.clear();
     }
+
+    public boolean isEmpty() {
+        return authMap.isEmpty();
+    }
 }
