@@ -67,7 +67,7 @@ public class HandlerRegistry {
                 userService.logout(authToken);
                 res.status(200);
                 return gson.toJson(new GenericResponse());
-            } catch (BadRequestException e) {
+            } catch (UnauthorizedException e) {
                 res.status(401);
                 return gson.toJson(new GenericResponse("Error: " + e.getMessage()));
             } catch (DataAccessException e) {
