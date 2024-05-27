@@ -1,6 +1,5 @@
 package memory;
 
-import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.UserData;
 
@@ -14,20 +13,13 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     @Override
-    public void createUser(UserData user) throws DataAccessException {
-        if (userMap.containsKey(user.username())) {
-            throw new DataAccessException("username " + user.username() + " already exists.");
-        }
+    public void createUser(UserData user) {
         userMap.put(user.username(), user);
     }
 
     @Override
-    public UserData getUser(String username) throws DataAccessException {
-        UserData user = userMap.get(username);
-        if (user == null) {
-            throw new DataAccessException("username " + username + " does not exist.");
-        }
-        return user;
+    public UserData getUser(String username) {
+        return userMap.get(username);
     }
 
     @Override

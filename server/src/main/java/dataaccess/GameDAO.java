@@ -8,13 +8,13 @@ import java.util.Collection;
 public interface GameDAO {
     int createGame(String gameName);
 
-    GameData getGame(int gameID) throws DataAccessException;
+    GameData getGame(int gameID);
 
     Collection<GameData> listGames();
 
-    void updateGame(int gameID, String playerColorField, String username) throws DataAccessException;
+    void updateGame(int gameID, String playerColorField, String username);
 
-    void updateGame(int gameID, ChessGame newChessGame) throws DataAccessException;
+    void updateGame(int gameID, ChessGame newChessGame);
 
     void clear();
 }

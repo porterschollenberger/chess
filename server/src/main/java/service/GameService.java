@@ -15,33 +15,48 @@ public class GameService {
     }
 
     public Collection<GameData> listGames(String authToken) throws DataAccessException {
-        authDAO.getAuth(authToken);
+        AuthData auth = authDAO.getAuth(authToken);
+        if (auth == null) {
+            throw new UnauthorizedException("authToken " + authToken + "does not exist.");
+        }
         return gameDAO.listGames();
     }
 
     public GameData createGame(String authToken, String gameName) throws DataAccessException {
-        authDAO.getAuth(authToken);
+        if (authToken == null || gameName == null) {
+            throw new BadRequestException("request did not contain correct information.");
+        }
+        AuthData auth = authDAO.getAuth(authToken);
+        if (auth == null) {
+            throw new UnauthorizedException("authToken " + authToken + "does not exist.");
+        }
         int gameID = gameDAO.createGame(gameName);
         return gameDAO.getGame(gameID);
     }
 
     public void joinGame(String authToken, String playerColor, int gameID) throws DataAccessException {
         AuthData auth = authDAO.getAuth(authToken);
+        if (auth == null) {
+            throw new UnauthorizedException("authToken " + authToken + "does not exist.");
+        }
         GameData game = gameDAO.getGame(gameID);
+        if (game == null) {
+            throw new BadRequestException("gameID " + gameID + " does not exist.");
+        }
         if ("WHITE".equals(playerColor)) {
             if (game.whiteUsername() == null) {
                 gameDAO.updateGame(gameID, "whiteUsername", auth.username());
             } else {
-                throw new DataAccessException("Player color " + playerColor + " is already taken");
+                throw new AlreadyTakenException("Player color " + playerColor + " is already taken.");
             }
         } else if ("BLACK".equals(playerColor)) {
             if (game.blackUsername() == null) {
                 gameDAO.updateGame(gameID, "blackUsername", auth.username());
             } else {
-                throw new DataAccessException("Player color " + playerColor + " is already taken");
+                throw new AlreadyTakenException("Player color " + playerColor + " is already taken.");
             }
         } else {
-            throw new DataAccessException("Player color " + playerColor + " is not valid");
+            throw new BadRequestException("Player color " + playerColor + " is not valid.");
         }
     }
 }

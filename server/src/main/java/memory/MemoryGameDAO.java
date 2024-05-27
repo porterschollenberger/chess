@@ -1,7 +1,6 @@
 package memory;
 
 import chess.ChessGame;
-import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
 
@@ -25,12 +24,8 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public GameData getGame(int gameID) throws DataAccessException {
-        GameData game = gameMap.get(gameID);
-        if (game == null) {
-            throw new DataAccessException("gameID " + gameID + " does not exist.");
-        }
-        return game;
+    public GameData getGame(int gameID) {
+        return gameMap.get(gameID);
     }
 
     @Override
@@ -39,26 +34,20 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(int gameID, String playerColorField, String username) throws DataAccessException {
+    public void updateGame(int gameID, String playerColorField, String username) {
         GameData game = gameMap.get(gameID);
-        if (game == null) {
-            throw new DataAccessException("gameID " + gameID + " does not exist.");
-        }
         GameData updatedGame = switch (playerColorField) {
             case "whiteUsername" ->
                     new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
             case "blackUsername" ->
                     new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
-            default -> throw new DataAccessException("Invalid field name: " + playerColorField);
+            default -> throw new RuntimeException("Invalid field name: " + playerColorField);
         };
         gameMap.replace(gameID, updatedGame);
     }
 
-    public void updateGame(int gameID, ChessGame newChessGame) throws DataAccessException {
+    public void updateGame(int gameID, ChessGame newChessGame) {
         GameData game = gameMap.get(gameID);
-        if (game == null) {
-            throw new DataAccessException("gameID " + gameID + " does not exist.");
-        }
         GameData updatedGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), newChessGame);
         gameMap.replace(gameID, updatedGame);
     }
