@@ -1,8 +1,6 @@
 package response;
 
-import spark.Response;
-
-public class RegisterResponse extends Response {
+public class RegisterResponse {
     private String username;
     private String authToken;
     private String message;

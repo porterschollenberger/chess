@@ -30,7 +30,7 @@ public class HandlerRegistry {
         handlers.put("register", (req, res) -> {
             try {
                 RegisterRequest registerRequest = gson.fromJson(req.body(), RegisterRequest.class);
-                UserData user = new UserData(registerRequest.getUsername(), registerRequest.getPassword(), registerRequest.getEmail());
+                UserData user = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
                 AuthData authData = userService.register(user);
                 res.status(200);
                 return gson.toJson(new RegisterResponse(authData.username(), authData.authToken()));
@@ -49,7 +49,7 @@ public class HandlerRegistry {
         handlers.put("login", (req, res) -> {
             try {
                 LoginRequest loginRequest = gson.fromJson(req.body(), LoginRequest.class);
-                AuthData authData = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+                AuthData authData = userService.login(loginRequest.username(), loginRequest.password());
                 res.status(200);
                 return gson.toJson(new LoginResponse(authData.username(), authData.authToken()));
             } catch (UnauthorizedException e) {
@@ -95,7 +95,7 @@ public class HandlerRegistry {
             try {
                 String authToken = req.headers("authorization");
                 CreateGameRequest createGameRequest = gson.fromJson(req.body(), CreateGameRequest.class);
-                String gameName = createGameRequest.getGameName();
+                String gameName = createGameRequest.gameName();
                 GameData game = gameService.createGame(authToken, gameName);
                 res.status(200);
                 return gson.toJson(new CreateGameResponse(game.gameID()));
@@ -115,8 +115,8 @@ public class HandlerRegistry {
             try {
                 String authToken = req.headers("authorization");
                 JoinGameRequest requestBody = gson.fromJson(req.body(), JoinGameRequest.class);
-                String playerColor = requestBody.getPlayerColor();
-                int gameId = requestBody.getGameID();
+                String playerColor = requestBody.playerColor();
+                int gameId = requestBody.gameID();
                 gameService.joinGame(authToken, playerColor, gameId);
                 res.status(200);
                 return gson.toJson(new GenericResponse());

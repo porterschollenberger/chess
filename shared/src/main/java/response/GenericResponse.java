@@ -1,6 +1,6 @@
 package response;
 
-public class GenericResponse extends spark.Response {
+public class GenericResponse {
     private String message;
 
     public GenericResponse(String message) {

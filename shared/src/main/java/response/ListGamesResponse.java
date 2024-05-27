@@ -1,11 +1,10 @@
 package response;
 
 import model.GameData;
-import spark.Response;
 
 import java.util.Collection;
 
-public class ListGamesResponse extends Response {
+public class ListGamesResponse {
     private Collection<GameData> games;
     private String message;
 

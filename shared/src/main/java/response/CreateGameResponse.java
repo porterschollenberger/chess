@@ -1,8 +1,6 @@
 package response;
 
-import spark.Response;
-
-public class CreateGameResponse extends Response {
+public class CreateGameResponse {
     private Integer gameID;
     private String message;
     public CreateGameResponse(int gameID) {
