@@ -66,7 +66,7 @@ public class HandlerRegistry {
         });
     }
 
-    private void logoutHander(UserService userService) {
+    private void logoutHandler(UserService userService) {
         handlers.put("logout", (req, res) -> {
             try {
                 String authToken = req.headers("authorization");
@@ -152,7 +152,7 @@ public class HandlerRegistry {
         clearHandler(clearService);
         registerHandler(userService);
         loginHandler(userService);
-        logoutHander(userService);
+        logoutHandler(userService);
         listGamesHandler(gameService);
         createGameHandler(gameService);
         joinGameService(gameService);
