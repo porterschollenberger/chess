@@ -9,6 +9,7 @@ import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,8 +45,9 @@ class UserServiceTest {
     void testLoginSuccess() throws DataAccessException {
         String username = "test username";
         String password = "test password";
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         String email = "test email";
-        UserData user = new UserData(username, password, email);
+        UserData user = new UserData(username, hashedPassword, email);
 
         userDAO.createUser(user);
 
@@ -58,8 +60,9 @@ class UserServiceTest {
     void testLoginFailure() {
         String username = "test username";
         String password = "test password";
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         String email = "test email";
-        UserData user = new UserData(username, password, email);
+        UserData user = new UserData(username, hashedPassword, email);
 
         userDAO.createUser(user);
 

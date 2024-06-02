@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.*;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
     private final AuthDAO authDAO;
@@ -29,7 +30,7 @@ public class UserService {
         if (user == null) {
             throw new UnauthorizedException("user does not exist.");
         }
-        if (!user.password().equals(password)) {
+        if (!BCrypt.checkpw(password, user.password())) {
             throw new UnauthorizedException("incorrect password.");
         }
         String authToken = authDAO.createAuth(username);
