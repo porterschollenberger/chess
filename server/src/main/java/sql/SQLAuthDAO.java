@@ -5,11 +5,8 @@ import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import model.AuthData;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
 import static sql.DBHelper.*;
 
 
