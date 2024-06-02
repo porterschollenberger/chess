@@ -5,13 +5,14 @@ import handler.HandlerRegistry;
 import memory.*;
 import service.*;
 import spark.*;
+import sql.*;
 
 public class Server {
 
     public int run(int desiredPort) {
-        AuthDAO authDAO = new MemoryAuthDAO();
-        GameDAO gameDAO = new MemoryGameDAO();
-        UserDAO userDAO = new MemoryUserDAO();
+        AuthDAO authDAO = new SQLAuthDAO();
+        GameDAO gameDAO = new SQLGameDAO();
+        UserDAO userDAO = new SQLUserDAO();
 
         UserService userService = new UserService(authDAO, userDAO);
         ClearService clearService = new ClearService(authDAO, gameDAO, userDAO);
