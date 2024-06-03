@@ -5,6 +5,7 @@ import memory.*;
 import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sql.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,8 +16,8 @@ class GameServiceTest {
 
     @BeforeEach
     void setUp() {
-        authDAO = new MemoryAuthDAO();
-        gameDAO = new MemoryGameDAO();
+        authDAO = new SQLAuthDAO();
+        gameDAO = new SQLGameDAO();
         gameService = new GameService(authDAO, gameDAO);
     }
 

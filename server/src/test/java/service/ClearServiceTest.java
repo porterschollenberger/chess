@@ -7,6 +7,7 @@ import memory.MemoryUserDAO;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sql.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,10 +19,11 @@ class ClearServiceTest {
 
     @BeforeEach
     void setUp() {
-        authDAO = new MemoryAuthDAO();
-        gameDAO = new MemoryGameDAO();
-        userDAO = new MemoryUserDAO();
+        authDAO = new SQLAuthDAO();
+        gameDAO = new SQLGameDAO();
+        userDAO = new SQLUserDAO();
         clearService = new ClearService(authDAO, gameDAO, userDAO);
+        userDAO.clear();
     }
 
     @Test
