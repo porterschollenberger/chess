@@ -32,6 +32,9 @@ public class SQLUserDAO implements UserDAO {
     public UserData getUser(String username) {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT username, password, email FROM userData WHERE username=?";
+            if (username == null) {
+                throw new RuntimeException();
+            }
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, username);
                 try (var rs = ps.executeQuery()) {
@@ -41,7 +44,7 @@ public class SQLUserDAO implements UserDAO {
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Unable to read data: %s", e.getMessage()));
+            throw new RuntimeException(e);
         }
         return null;
     }

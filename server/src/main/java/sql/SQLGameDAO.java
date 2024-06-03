@@ -39,9 +39,6 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public GameData getGame(int gameID) {
-        if (gameID <= 0) {
-            throw new RuntimeException();
-        }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM gameData WHERE gameID=?";
             try (var ps = conn.prepareStatement(statement)) {
