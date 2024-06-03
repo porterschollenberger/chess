@@ -35,6 +35,9 @@ public class SQLAuthDAO implements AuthDAO {
     public AuthData getAuth(String authToken) {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT authToken, username FROM authData WHERE authToken=?";
+            if (authToken == null) {
+                throw new RuntimeException();
+            }
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, authToken);
                 try (var rs = ps.executeQuery()) {
@@ -44,7 +47,7 @@ public class SQLAuthDAO implements AuthDAO {
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Unable to read data: %s", e.getMessage()));
+            throw new RuntimeException(e);
         }
         return null;
     }
@@ -52,6 +55,9 @@ public class SQLAuthDAO implements AuthDAO {
     @Override
     public void deleteAuth(String authToken) {
         var statement = "DELETE FROM authData WHERE authToken=?";
+        if (authToken == null) {
+            throw new RuntimeException();
+        }
         try {
             executeUpdate(statement, authToken);
         } catch (DataAccessException e) {
@@ -71,12 +77,14 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public boolean isEmpty() {
-        var statement = "SELECT * FROM authData";
-        try {
-            var rs = executeUpdate(statement);
-            assert rs != null;
-            return rs.isEmpty();
-        } catch (DataAccessException e) {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM authData";
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    return !rs.next();
+                }
+            }
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

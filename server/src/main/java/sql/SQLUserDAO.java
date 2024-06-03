@@ -58,12 +58,14 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public boolean isEmpty() {
-        var statement = "SELECT * FROM userData";
-        try {
-            var rs = executeUpdate(statement);
-            assert rs != null;
-            return rs.isEmpty();
-        } catch (DataAccessException e) {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM userData";
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    return !rs.next();
+                }
+            }
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

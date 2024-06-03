@@ -25,12 +25,13 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public int createGame(String gameName) {
-        var statement = "INSERT INTO gameData (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
+        var statement = "INSERT INTO gameData (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
         try {
             ChessGame game = new ChessGame();
             String jsonGame = new Gson().toJson(game);
-            executeUpdate(statement, gameID, null, null, gameName, jsonGame);
-            return gameID++;
+            String gameIDString = executeUpdate(statement, null, null, gameName, jsonGame);
+            assert gameIDString != null;
+            return Integer.parseInt(gameIDString);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -38,6 +39,9 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public GameData getGame(int gameID) {
+        if (gameID <= 0) {
+            throw new RuntimeException();
+        }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM gameData WHERE gameID=?";
             try (var ps = conn.prepareStatement(statement)) {
@@ -111,12 +115,14 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public boolean isEmpty() {
-        var statement = "SELECT * FROM userData";
-        try {
-            var rs = executeUpdate(statement);
-            assert rs != null;
-            return rs.isEmpty();
-        } catch (DataAccessException e) {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM gameData";
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    return !rs.next();
+                }
+            }
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -124,13 +130,12 @@ public class SQLGameDAO implements GameDAO {
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS gameData (
-              `gameID` varchar(256) NOT NULL,
+              `gameId` int NOT NULL AUTO_INCREMENT,
               `whiteUsername` varchar(256) DEFAULT NULL,
               `blackUsername` varchar(256) DEFAULT NULL,
               `gameName` varchar(256) NOT NULL,
               `game` TEXT NOT NULL,
               PRIMARY KEY (`gameID`),
-              INDEX(gameID),
               INDEX(whiteUsername),
               INDEX(blackUsername),
               INDEX(gameName)
