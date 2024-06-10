@@ -59,6 +59,7 @@ public class Client {
     }
 
     public String register(String... params) throws ResponseException {
+        assertNotLoggedIn();
         if (params.length == 3) {
             UserData user = new UserData(params[0], params[1], params[2]);
             server.register(user);
@@ -70,6 +71,7 @@ public class Client {
     }
 
     public String login(String... params) throws ResponseException {
+        assertNotLoggedIn();
         if (params.length == 2) {
             server.login(params[0], params[1]);
             state = State.LOGGEDIN;
@@ -125,6 +127,12 @@ public class Client {
     private void assertLoggedIn() throws ResponseException {
         if (state == State.LOGGEDOUT) {
             throw new ResponseException(400, "You must log in");
+        }
+    }
+
+    private void assertNotLoggedIn() throws ResponseException {
+        if (state == State.LOGGEDIN) {
+            throw new ResponseException(400, "You are already logged in");
         }
     }
 }
