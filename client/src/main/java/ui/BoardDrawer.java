@@ -11,12 +11,12 @@ import java.nio.charset.StandardCharsets;
 import static ui.EscapeSequences.*;
 
 public class BoardDrawer {
-    private static final ChessBoard board = new ChessBoard();
+    private static final ChessBoard BOARD = new ChessBoard();
     private static final String EMPTY = " ";
 
 
     public static void run() {
-        board.resetBoard();
+        BOARD.resetBoard();
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
@@ -110,7 +110,7 @@ public class BoardDrawer {
             } else {
                 setBlack(out);
             }
-            printPieceWithSpacing(out, board.getPiece(new ChessPosition(row, 8 - (col - 1))));
+            printPieceWithSpacing(out, BOARD.getPiece(new ChessPosition(row, 8 - (col - 1))));
         }
     }
 
@@ -121,7 +121,7 @@ public class BoardDrawer {
             } else {
                 setBlack(out);
             }
-            printPieceWithSpacing(out, board.getPiece(new ChessPosition(row, col)));
+            printPieceWithSpacing(out, BOARD.getPiece(new ChessPosition(row, col)));
         }
     }
 

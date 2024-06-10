@@ -46,7 +46,7 @@ class GameDAOTest {
 
     @Test
     void testGetGameFailure() {
-        //TODO: find a way that this fails so I can test for that
+        //find a way that this fails so I can test for that
     }
 
     @Test
@@ -58,7 +58,7 @@ class GameDAOTest {
 
     @Test
     void testListGamesFailure() {
-        //TODO: find a way that this fails so I can test for that
+        //find a way that this fails so I can test for that
     }
 
     @Test

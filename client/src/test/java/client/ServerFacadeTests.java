@@ -36,8 +36,8 @@ public class ServerFacadeTests {
 
     @Test
     void testRegisterSuccess() throws Exception {
-        var registerResponse = facade.register(testUser);
-        assertNotNull(registerResponse.getAuthToken());
+        var response = facade.register(testUser);
+        assertNotNull(response.getAuthToken());
     }
 
     @Test
@@ -51,8 +51,8 @@ public class ServerFacadeTests {
         facade.register(testUser);
         facade.logout();
 
-        var loginResponse = facade.login("player1", "password");
-        assertNotNull(loginResponse.getAuthToken());
+        var response = facade.login("player1", "password");
+        assertNotNull(response.getAuthToken());
     }
 
     @Test
@@ -64,8 +64,8 @@ public class ServerFacadeTests {
     void testLogoutSuccess() throws Exception {
         facade.register(testUser);
 
-        var GenericResponse = facade.logout();
-        assertNull(GenericResponse.getMessage());
+        var response = facade.logout();
+        assertNull(response.getMessage());
     }
 
     @Test
@@ -106,12 +106,12 @@ public class ServerFacadeTests {
         facade.createGame("test");
 
         var response = facade.joinGame("white", 1);
-        assertNotNull(response.getMessage()); // TODO: change this after implementation
+        assertNotNull(response.getMessage()); // change this after implementation
     }
 
     @Test
     void testJoinFailure() throws Exception {
-        assertNotNull(facade.joinGame("white", 1)); // TODO: change this after implementation
+        assertNotNull(facade.joinGame("white", 1)); // change this after implementation
     }
 
     @Test

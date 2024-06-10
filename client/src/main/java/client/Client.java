@@ -67,7 +67,7 @@ public class Client {
             state = State.LOGGEDIN;
             return "You registered successfully! You are now logged in.";
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
+        throw new ResponseException("Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }
 
     public String login(String... params) throws ResponseException {
@@ -77,7 +77,7 @@ public class Client {
             state = State.LOGGEDIN;
             return String.format("You signed in as %s", params[0]);
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
+        throw new ResponseException("Expected: <USERNAME> <PASSWORD>");
     }
 
     public String logout() throws ResponseException {
@@ -93,7 +93,7 @@ public class Client {
             server.createGame(params[0]);
             return "You created a game successfully!";
         }
-        throw new ResponseException(400, "Expected: <NAME>");
+        throw new ResponseException("Expected: <NAME>");
     }
 
     public String list() throws ResponseException {
@@ -112,7 +112,7 @@ public class Client {
             BoardDrawer.run();
             return "";
         }
-        throw new ResponseException(400, "Expected: <ID> [WHITE|BLACK]");
+        throw new ResponseException("Expected: <ID> [WHITE|BLACK]");
     }
 
     public String observe(String... params) throws ResponseException {
@@ -121,18 +121,18 @@ public class Client {
             BoardDrawer.run();
             return "";
         }
-        throw new ResponseException(400, "Expected: <ID>");
+        throw new ResponseException("Expected: <ID>");
     }
 
     private void assertLoggedIn() throws ResponseException {
         if (state == State.LOGGEDOUT) {
-            throw new ResponseException(400, "You must log in");
+            throw new ResponseException("You must log in");
         }
     }
 
     private void assertNotLoggedIn() throws ResponseException {
         if (state == State.LOGGEDIN) {
-            throw new ResponseException(400, "You are already logged in");
+            throw new ResponseException("You are already logged in");
         }
     }
 }
