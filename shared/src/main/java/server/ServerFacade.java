@@ -19,7 +19,9 @@ public class ServerFacade {
 
     public RegisterResponse register(UserData user) throws ResponseException {
         var path = "/user";
-        return makeRequest("POST", path, user, RegisterResponse.class);
+        var response = makeRequest("POST", path, user, RegisterResponse.class);
+        this.authToken = response.getAuthToken();
+        return response;
     }
 
     public LoginResponse login(String username, String password) throws ResponseException {
