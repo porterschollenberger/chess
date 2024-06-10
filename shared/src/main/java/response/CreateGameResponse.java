@@ -10,4 +10,12 @@ public class CreateGameResponse {
     public CreateGameResponse(String message) {
         this.message = message;
     }
+
+    public Integer getGameID() {
+        return gameID;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

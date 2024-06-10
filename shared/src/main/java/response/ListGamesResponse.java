@@ -15,4 +15,12 @@ public class ListGamesResponse {
     public ListGamesResponse(String message) {
         this.message = message;
     }
+
+    public Collection<GameData> getGames() {
+        return games;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

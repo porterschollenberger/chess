@@ -13,4 +13,16 @@ public class RegisterResponse {
     public RegisterResponse(String message) {
         this.message = message;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

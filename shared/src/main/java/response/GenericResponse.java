@@ -8,4 +8,8 @@ public class GenericResponse {
     }
 
     public GenericResponse() {}
+
+    public String getMessage() {
+        return message;
+    }
 }
