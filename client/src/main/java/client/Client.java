@@ -2,7 +2,7 @@ package client;
 
 import exception.ResponseException;
 import model.UserData;
-import server.ServerFacade;
+import facade.ServerFacade;
 import ui.BoardDrawer;
 
 import java.util.Arrays;
