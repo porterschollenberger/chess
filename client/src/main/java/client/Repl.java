@@ -27,7 +27,7 @@ public class Repl {
                 System.out.print(msg);
             }
         }
-        System.out.println();
+        System.exit(0);
     }
 
     private void printPrompt() {

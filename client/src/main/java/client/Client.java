@@ -1,6 +1,5 @@
 package client;
 
-import com.google.gson.Gson;
 import exception.ResponseException;
 import model.UserData;
 import server.ServerFacade;
@@ -97,9 +96,8 @@ public class Client {
         assertLoggedIn();
         var games = server.listGames();
         var result = new StringBuilder();
-        var gson = new Gson();
         for (var game : games.getGames()) {
-            result.append(gson.toJson(game)).append('\n');
+            result.append(game.toString()).append('\n');
         }
         return result.toString();
     }
