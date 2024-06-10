@@ -32,8 +32,7 @@ public class BoardDrawer {
         drawChessBoardWhite(out);
         drawHeadersWhite(out);
 
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_WHITE);
+        out.print(RESET);
     }
 
     private static void drawHeadersBlack(PrintStream out) {
