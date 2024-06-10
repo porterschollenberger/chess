@@ -28,7 +28,7 @@ public class Client {
                 case "logout" -> logout();
                 case "create" -> create(params);
                 case "list" -> list();
-                case "play" -> play(params);
+                case "join" -> join(params);
                 case "observe" -> observe(params);
                 default -> help();
             };
@@ -62,7 +62,9 @@ public class Client {
         if (params.length == 3) {
             UserData user = new UserData(params[0], params[1], params[2]);
             server.register(user);
-            return "You registered successfully!";
+            server.login(params[0], params[1]);
+            state = State.LOGGEDIN;
+            return "You registered successfully! You are now logged in.";
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }
@@ -102,16 +104,22 @@ public class Client {
         return result.toString();
     }
 
-    public String play(String... params) throws ResponseException {
+    public String join(String... params) throws ResponseException {
         assertLoggedIn();
-        BoardDrawer.run();
-        return "";
+        if (params.length == 2) {
+            BoardDrawer.run();
+            return "";
+        }
+        throw new ResponseException(400, "Expected: <ID> [WHITE|BLACK]");
     }
 
     public String observe(String... params) throws ResponseException {
         assertLoggedIn();
-        BoardDrawer.run();
-        return "";
+        if (params.length == 1) {
+            BoardDrawer.run();
+            return "";
+        }
+        throw new ResponseException(400, "Expected: <ID>");
     }
 
     private void assertLoggedIn() throws ResponseException {
