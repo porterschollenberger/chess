@@ -110,6 +110,7 @@ public class Client {
         assertLoggedIn();
         if (params.length == 2) {
             BoardDrawer.run();
+            server.joinGame(params[1], Integer.parseInt(params[0]));
             return "";
         }
         throw new ResponseException("Expected: <ID> [WHITE|BLACK]");

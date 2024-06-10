@@ -49,9 +49,8 @@ public class ServerFacade {
     }
 
     public GenericResponse joinGame(String playerColor, int gameID) throws ResponseException {
-//        var path = "/game";
-//        return makeRequest("PUT", path, new JoinGameRequest(playerColor, gameID), GenericResponse.class);
-        return new GenericResponse("This has not been implemented");
+        var path = "/game";
+        return makeRequest("PUT", path, new JoinGameRequest(playerColor, gameID), GenericResponse.class);
     }
 
     public GenericResponse clear() {

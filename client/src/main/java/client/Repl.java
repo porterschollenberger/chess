@@ -10,7 +10,7 @@ public class Repl {
     }
 
     public void run() {
-        System.out.println("♕ 240 Chess Client: Type Help to get started. ♕");
+        System.out.println("♕ 240 Chess Client: Here are some commands to get started. ♕");
         System.out.print(client.help());
 
         Scanner scanner = new Scanner(System.in);

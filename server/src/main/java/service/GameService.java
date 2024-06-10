@@ -43,13 +43,13 @@ public class GameService {
         if (game == null) {
             throw new BadRequestException("gameID " + gameID + " does not exist.");
         }
-        if ("WHITE".equals(playerColor)) {
+        if ("WHITE".equalsIgnoreCase(playerColor)) {
             if (game.whiteUsername() == null) {
                 gameDAO.updateGame(gameID, "whiteUsername", auth.username());
             } else {
                 throw new AlreadyTakenException("Player color " + playerColor + " is already taken.");
             }
-        } else if ("BLACK".equals(playerColor)) {
+        } else if ("BLACK".equalsIgnoreCase(playerColor)) {
             if (game.blackUsername() == null) {
                 gameDAO.updateGame(gameID, "blackUsername", auth.username());
             } else {
