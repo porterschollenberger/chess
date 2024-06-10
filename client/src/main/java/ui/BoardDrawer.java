@@ -15,7 +15,7 @@ public class BoardDrawer {
     private static final String EMPTY = " ";
 
 
-    public static void main(String[] args) {
+    public static void run() {
         board.resetBoard();
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
