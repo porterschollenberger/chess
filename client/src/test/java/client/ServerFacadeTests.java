@@ -1,12 +1,12 @@
 package client;
 
+import exception.ResponseException;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
@@ -36,8 +36,14 @@ public class ServerFacadeTests {
 
     @Test
     void testRegisterSuccess() throws Exception {
-        var registerResponse = facade.register(new UserData("player1", "password", "p1@email.com"));
+        var registerResponse = facade.register(testUser);
         assertNotNull(registerResponse.getAuthToken());
+    }
+
+    @Test
+    void testRegisterFailure() throws Exception {
+        facade.register(testUser);
+        assertThrows(ResponseException.class, () -> facade.register(testUser));
     }
 
     @Test
@@ -50,6 +56,11 @@ public class ServerFacadeTests {
     }
 
     @Test
+    void testLoginFailure() {
+        assertThrows(ResponseException.class, () -> facade.login("player1", "password"));
+    }
+
+    @Test
     void testLogoutSuccess() throws Exception {
         facade.register(testUser);
 
@@ -58,11 +69,21 @@ public class ServerFacadeTests {
     }
 
     @Test
+    void testLogoutFailure() {
+        assertThrows(ResponseException.class, () -> facade.logout());
+    }
+
+    @Test
     void testCreateGameSuccess() throws Exception {
         facade.register(testUser);
 
         var response = facade.createGame("test");
         assertNotNull(response.getGameID());
+    }
+
+    @Test
+    void testCreateGameFailure() {
+        assertThrows(ResponseException.class, () -> facade.createGame("test"));
     }
 
     @Test
@@ -75,12 +96,22 @@ public class ServerFacadeTests {
     }
 
     @Test
+    void testListGamesFailure() {
+        assertThrows(ResponseException.class, () -> facade.listGames());
+    }
+
+    @Test
     void testJoinSuccess() throws Exception {
         facade.register(testUser);
         facade.createGame("test");
 
         var response = facade.joinGame("white", 1);
         assertNotNull(response.getMessage()); // TODO: change this after implementation
+    }
+
+    @Test
+    void testJoinFailure() throws Exception {
+        assertNotNull(facade.joinGame("white", 1)); // TODO: change this after implementation
     }
 
     @Test
