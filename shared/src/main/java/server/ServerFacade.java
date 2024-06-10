@@ -11,6 +11,7 @@ import java.net.*;
 
 public class ServerFacade {
     private final int port;
+    private String authToken;
 
     public ServerFacade(int port) {
         this.port = port;
@@ -23,12 +24,16 @@ public class ServerFacade {
 
     public LoginResponse login(String username, String password) throws ResponseException {
         var path = "/session";
-        return makeRequest("POST", path, new LoginRequest(username, password), LoginResponse.class);
+        var response = makeRequest("POST", path, new LoginRequest(username, password), LoginResponse.class);
+        this.authToken = response.getAuthToken();
+        return response;
     }
 
     public GenericResponse logout() throws ResponseException {
         var path = "/session";
-        return makeRequest("DELETE", path, null, GenericResponse.class);
+        var response = makeRequest("DELETE", path, null, GenericResponse.class);
+        this.authToken = null;
+        return response;
     }
 
     public CreateGameResponse createGame(String gameName) throws ResponseException {
@@ -62,6 +67,10 @@ public class ServerFacade {
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+
+            if (authToken != null) {
+                http.setRequestProperty("authorization", authToken);
+            }
 
             writeBody(request, http);
             http.connect();
