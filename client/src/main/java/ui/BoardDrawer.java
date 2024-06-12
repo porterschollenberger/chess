@@ -13,25 +13,25 @@ import static ui.EscapeSequences.*;
 public class BoardDrawer {
     private static final ChessBoard BOARD = new ChessBoard();
     private static final String EMPTY = " ";
+    private static final PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
 
-    public static void run() {
+    public static void drawWhiteBoard() {
         BOARD.resetBoard();
-
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-
         out.print(ERASE_SCREEN);
-
-        drawHeadersBlack(out);
-        drawChessBoardBlack(out);
-        drawHeadersBlack(out);
-
         out.println();
-
         drawHeadersWhite(out);
         drawChessBoardWhite(out);
         drawHeadersWhite(out);
+        out.print(RESET);
+    }
 
+    public static void drawBlackBoard() {
+        BOARD.resetBoard();
+        out.print(ERASE_SCREEN);
+        drawHeadersBlack(out);
+        drawChessBoardBlack(out);
+        drawHeadersBlack(out);
         out.print(RESET);
     }
 

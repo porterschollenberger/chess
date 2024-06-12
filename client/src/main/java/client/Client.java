@@ -109,8 +109,12 @@ public class Client {
     public String join(String... params) throws ResponseException {
         assertLoggedIn();
         if (params.length == 2) {
-            BoardDrawer.run();
             server.joinGame(params[1], Integer.parseInt(params[0]));
+            if (params[1].equalsIgnoreCase("WHITE")) {
+                BoardDrawer.drawWhiteBoard();
+            } else {
+                BoardDrawer.drawBlackBoard();
+            }
             return "";
         }
         throw new ResponseException("Expected: <ID> [WHITE|BLACK]");
@@ -119,7 +123,7 @@ public class Client {
     public String observe(String... params) throws ResponseException {
         assertLoggedIn();
         if (params.length == 1) {
-            BoardDrawer.run();
+            BoardDrawer.drawWhiteBoard();
             return "";
         }
         throw new ResponseException("Expected: <ID>");
