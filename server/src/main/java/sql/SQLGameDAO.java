@@ -92,9 +92,10 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public void updateGame(int gameID, ChessGame newChessGame) {
-        var statement = "UPDATE gameData SET game = newChessGame WHERE gameID=?";
+        var statement = "UPDATE gameData SET game=? WHERE gameID=?";
         try {
-            executeUpdate(statement);
+            String jsonGame = new Gson().toJson(newChessGame);
+            executeUpdate(statement, jsonGame, gameID);
         } catch (DataAccessException ex) {
             throw new RuntimeException(ex);
         }
