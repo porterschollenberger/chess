@@ -175,10 +175,11 @@ public class Client {
     public String leave() throws ResponseException {
         assertPlaying();
         server.leaveGame(clientInfo.getPlayerColor(), clientInfo.getGameID());
+        ws.leave(clientInfo.getAuthToken(), clientInfo.getGameID(), clientInfo.getUsername());
         clientInfo.setPlayerColor(null);
         clientInfo.setGameID(null);
         state = State.LOGGEDIN;
-        ws.leave(clientInfo.getAuthToken(), clientInfo.getGameID());
+
         return "";
     }
 

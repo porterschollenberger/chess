@@ -8,6 +8,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.Connect;
+import websocket.commands.Leave;
 import websocket.commands.UserGameCommand;
 import websocket.messages.Notification;
 
@@ -34,10 +35,11 @@ public class WebSocketHandler {
         switch (action.getCommandType()) {
             case CONNECT:
                 Connect connectCommand = new Gson().fromJson(message, Connect.class);
-                connect(connectCommand.getGameID(), session, connectCommand.getUsername(), connectCommand.getColor());
+                connect(session, connectCommand.getGameID(), connectCommand.getUsername(), connectCommand.getColor());
                 break;
             case LEAVE:
-                leave(session);
+                Leave leaveCommand = new Gson().fromJson(message, Leave.class);
+                leave(session, leaveCommand.getGameID(), leaveCommand.getUsername());
                 break;
             case MAKE_MOVE:
                 break;
@@ -46,7 +48,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void connect(Integer gameID, Session session, String username, String color) throws IOException {
+    private void connect(Session session, Integer gameID, String username, String color) throws IOException {
         connections.add(gameID, session);
         String message;
         if (color.equals("observer")) {
@@ -58,7 +60,10 @@ public class WebSocketHandler {
         connections.broadcast(gameID, notification, session);
     }
 
-    private void leave(Session session) {
+    private void leave(Session session, Integer gameID, String username) throws IOException {
         connections.remove(session);
+        String message = String.format("%s left the game", username);
+        var notification = new Notification(message);
+        connections.broadcast(gameID, notification, session);
     }
 }
