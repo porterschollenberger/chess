@@ -1,12 +1,15 @@
 package client;
 
+import websocket.NotificationHandler;
+import websocket.messages.Notification;
+
 import java.util.Scanner;
 
-public class Repl {
+public class Repl implements NotificationHandler {
     private final Client client;
 
     public Repl(int port) {
-        client = new Client(port);
+        client = new Client(port, this);
     }
 
     public void run() {
@@ -32,5 +35,10 @@ public class Repl {
 
     private void printPrompt() {
         System.out.print("\n" + ">>> ");
+    }
+
+    public void notify(Notification notification) {
+        System.out.println(notification.getMessage());
+        printPrompt();
     }
 }
