@@ -8,7 +8,6 @@ import response.RegisterResponse;
 import ui.BoardDrawer;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
-import websocket.messages.Notification;
 
 
 import java.util.Arrays;
@@ -54,30 +53,37 @@ public class Client {
     public String help() {
         if (state == State.LOGGEDOUT) {
             return """
-               register <USERNAME> <PASSWORD> <EMAIL> - create an account
-               login <USERNAME> <PASSWORD> - login and play chess
-               quit - exit the program
-               help - list available commands
-               """;
+                register <USERNAME> <PASSWORD> <EMAIL> - create an account
+                login <USERNAME> <PASSWORD> - login and play chess
+                quit - exit the program
+                help - list available commands
+                """;
         } else if (state == State.LOGGEDIN) {
             return """
-               create <NAME> - create a chess game
-               list - shows all games
-               join <ID> [WHITE|BLACK] - join a game as specified color
-               observe <ID> - watch a game being played
-               logout - log out of account
-               quit - exit the program
-               help - list available commands
-               """;
+                create <NAME> - create a chess game
+                list - shows all games
+                join <ID> [WHITE|BLACK] - join a game as specified color
+                observe <ID> - watch a game being played
+                logout - log out of account
+                quit - exit the program
+                help - list available commands
+                """;
         } else if (state == State.PLAYING) {
             return """
-                   redraw - redraw the chessboard on your screen
-                   move <startSquare> <endSquare> - move a chess piece (ex. move e2 e4)
-                   leave - leave the chess game
-                   resign - forfeit the match and end the game
-                   highlight <square> - shows the legal moves for the piece at the specified square
-                   help - list available commands
-                   """;
+                redraw - redraw the chessboard on your screen
+                move <startSquare> <endSquare> - move a chess piece (ex. move e2 e4)
+                leave - leave the chess game
+                resign - forfeit the match and end the game
+                highlight <square> - show the legal moves for the piece at the specified square
+                help - list available commands
+                """;
+        } else if (state == State.OBSERVING) {
+            return """
+                redraw - redraw the chessboard on your screen
+                leave - leave the chess game
+                highlight <square> - show the legal moves for the piece at the specified square
+                help - list available commands
+                """;
         } else {
             throw new RuntimeException("Invalid state");
         }
@@ -160,7 +166,7 @@ public class Client {
         if (params.length == 1) {
             clientInfo.setPlayerColor("observer");
             clientInfo.setGameID(Integer.valueOf(params[0]));
-            state = State.PLAYING;
+            state = State.OBSERVING;
             ws.connect(clientInfo.getAuthToken(), clientInfo.getGameID(), clientInfo.getUsername(), clientInfo.getPlayerColor());
             BoardDrawer.drawWhiteBoard();
             return "";
@@ -188,7 +194,11 @@ public class Client {
         return "";
     }
 
-    public String resign() {
+    public String resign() throws ResponseException {
+        assertPlaying();
+        ws.resign(clientInfo.getAuthToken(), clientInfo.getGameID(), clientInfo.getUsername());
+        // find a way to stop moves being made in the game, not let you resign multiple times,
+        // and not let other player resign
         return "";
     }
 
@@ -206,6 +216,12 @@ public class Client {
 
     private void assertPlaying() throws ResponseException {
         if (state != State.PLAYING) {
+            throw new ResponseException("You can't do that now. Type \"help\" to see the available commands");
+        }
+    }
+
+    private void assertPlayingOrObserving() throws ResponseException {
+        if (state != State.PLAYING && state != State.OBSERVING) {
             throw new ResponseException("You can't do that now. Type \"help\" to see the available commands");
         }
     }

@@ -9,6 +9,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.Connect;
 import websocket.commands.Leave;
+import websocket.commands.Resign;
 import websocket.commands.UserGameCommand;
 import websocket.messages.Notification;
 
@@ -44,6 +45,8 @@ public class WebSocketHandler {
             case MAKE_MOVE:
                 break;
             case RESIGN:
+                Resign resignCommand = new Gson().fromJson(message, Resign.class);
+                resign(resignCommand.getGameID(), resignCommand.getUsername());
                 break;
         }
     }
@@ -65,5 +68,11 @@ public class WebSocketHandler {
         String message = String.format("%s left the game", username);
         var notification = new Notification(message);
         connections.broadcast(gameID, notification, session);
+    }
+
+    private void resign(Integer gameID, String username) throws IOException {
+        String message = String.format("%s resigned", username);
+        var notification = new Notification(message);
+        connections.broadcast(gameID, notification, null);
     }
 }
