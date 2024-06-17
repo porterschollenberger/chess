@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessBoard;
 import exception.ResponseException;
 import model.UserData;
 import facade.ServerFacade;
@@ -18,6 +19,7 @@ public class Client {
     private WebSocketFacade ws;
     private final NotificationHandler notificationHandler;
     private final ClientInfo clientInfo = new ClientInfo(null, null, null, null);
+    private final ChessBoard board = new ChessBoard();
 
     public Client(int port, NotificationHandler notificationHandler) {
         server = new ServerFacade(port);
@@ -43,6 +45,7 @@ public class Client {
                 case "leave" -> leave();
                 case "move" -> move(params);
                 case "resign" -> resign();
+                case "highlight" -> highlight();
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -148,9 +151,9 @@ public class Client {
         if (params.length == 2) {
             server.joinGame(params[1], Integer.parseInt(params[0]));
             if (params[1].equalsIgnoreCase("WHITE")) {
-                BoardDrawer.drawWhiteBoard();
+                BoardDrawer.drawWhiteBoard(board);
             } else {
-                BoardDrawer.drawBlackBoard();
+                BoardDrawer.drawBlackBoard(board);
             }
             clientInfo.setPlayerColor(params[1].toLowerCase());
             clientInfo.setGameID(Integer.valueOf(params[0]));
@@ -168,18 +171,24 @@ public class Client {
             clientInfo.setGameID(Integer.valueOf(params[0]));
             state = State.OBSERVING;
             ws.connect(clientInfo.getAuthToken(), clientInfo.getGameID(), clientInfo.getUsername(), clientInfo.getPlayerColor());
-            BoardDrawer.drawWhiteBoard();
+            BoardDrawer.drawWhiteBoard(board);
             return "";
         }
         throw new ResponseException("Expected: <ID>");
     }
 
-    private String redraw() {
+    public String redraw() throws ResponseException {
+        assertPlayingOrObserving();
+        if (clientInfo.getPlayerColor().equals("white") || clientInfo.getPlayerColor().equals("observer")) {
+            BoardDrawer.drawWhiteBoard(board);
+        } else if (clientInfo.getPlayerColor().equals("black")) {
+            BoardDrawer.drawBlackBoard(board);
+        }
         return "";
     }
 
     public String leave() throws ResponseException {
-        assertPlaying();
+        assertPlayingOrObserving();
         server.leaveGame(clientInfo.getPlayerColor(), clientInfo.getGameID());
         ws.leave(clientInfo.getAuthToken(), clientInfo.getGameID(), clientInfo.getUsername());
         clientInfo.setPlayerColor(null);
@@ -199,6 +208,11 @@ public class Client {
         ws.resign(clientInfo.getAuthToken(), clientInfo.getGameID(), clientInfo.getUsername());
         // find a way to stop moves being made in the game, not let you resign multiple times,
         // and not let other player resign
+        return "";
+    }
+
+    public String highlight() throws ResponseException {
+        assertPlayingOrObserving();
         return "";
     }
 

@@ -106,12 +106,16 @@ public class ServerFacadeTests {
         facade.createGame("test");
 
         var response = facade.joinGame("white", 1);
-        assertNotNull(response.getMessage()); // change this after implementation
+        assertNotNull(response);
     }
 
     @Test
     void testJoinFailure() throws Exception {
-        assertNotNull(facade.joinGame("white", 1)); // change this after implementation
+        facade.register(testUser);
+        facade.createGame("test");
+
+        facade.joinGame("white", 1);
+        assertThrows(Exception.class, () -> facade.joinGame("white", 1));
     }
 
     @Test

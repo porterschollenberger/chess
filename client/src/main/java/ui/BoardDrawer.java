@@ -11,26 +11,25 @@ import java.nio.charset.StandardCharsets;
 import static ui.EscapeSequences.*;
 
 public class BoardDrawer {
-    private static final ChessBoard BOARD = new ChessBoard();
     private static final String EMPTY = " ";
     private static final PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
 
-    public static void drawWhiteBoard() {
-        BOARD.resetBoard();
+    public static void drawWhiteBoard(ChessBoard board) {
+        board.resetBoard();
         out.print(ERASE_SCREEN);
         out.println();
         drawHeadersWhite(out);
-        drawChessBoardWhite(out);
+        drawChessBoardWhite(out,board);
         drawHeadersWhite(out);
         out.print(RESET);
     }
 
-    public static void drawBlackBoard() {
-        BOARD.resetBoard();
+    public static void drawBlackBoard(ChessBoard board) {
+        board.resetBoard();
         out.print(ERASE_SCREEN);
         drawHeadersBlack(out);
-        drawChessBoardBlack(out);
+        drawChessBoardBlack(out, board);
         drawHeadersBlack(out);
         out.print(RESET);
     }
@@ -81,10 +80,10 @@ public class BoardDrawer {
         out.print(player);
     }
 
-    private static void drawChessBoardBlack(PrintStream out) {
+    private static void drawChessBoardBlack(PrintStream out, ChessBoard board) {
         for (int row = 1; row <= 8; row++) {
             drawHeader(out, String.valueOf(row));
-            drawRowOfSquaresBlack(out, row);
+            drawRowOfSquaresBlack(out, row, board);
             drawHeader(out, String.valueOf(row));
 
             setBlack(out);
@@ -92,10 +91,10 @@ public class BoardDrawer {
         }
     }
 
-    private static void drawChessBoardWhite(PrintStream out) {
+    private static void drawChessBoardWhite(PrintStream out, ChessBoard board) {
         for (int row = 8; row >= 1; row--) {
             drawHeader(out, String.valueOf(row));
-            drawRowOfSquaresWhite(out, row);
+            drawRowOfSquaresWhite(out, row, board);
             drawHeader(out, String.valueOf(row));
 
             setBlack(out);
@@ -103,25 +102,25 @@ public class BoardDrawer {
         }
     }
 
-    private static void drawRowOfSquaresBlack(PrintStream out, int row) {
+    private static void drawRowOfSquaresBlack(PrintStream out, int row, ChessBoard board) {
         for (int col = 1; col <= 8; col++) {
             if ((col + row % 2) % 2 == 0) {
                 setWhite(out);
             } else {
                 setBlack(out);
             }
-            printPieceWithSpacing(out, BOARD.getPiece(new ChessPosition(row, 8 - (col - 1))));
+            printPieceWithSpacing(out, board.getPiece(new ChessPosition(row, 8 - (col - 1))));
         }
     }
 
-    private static void drawRowOfSquaresWhite(PrintStream out, int row) {
+    private static void drawRowOfSquaresWhite(PrintStream out, int row, ChessBoard board) {
         for (int col = 1; col <= 8; col++) {
             if ((col + row % 2) % 2 == 1) {
                 setWhite(out);
             } else {
                 setBlack(out);
             }
-            printPieceWithSpacing(out, BOARD.getPiece(new ChessPosition(row, col)));
+            printPieceWithSpacing(out, board.getPiece(new ChessPosition(row, col)));
         }
     }
 
