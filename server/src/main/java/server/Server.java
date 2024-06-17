@@ -6,6 +6,7 @@ import memory.*;
 import service.*;
 import spark.*;
 import sql.*;
+import websocket.WebSocketHandler;
 
 public class Server {
 
@@ -18,9 +19,13 @@ public class Server {
         ClearService clearService = new ClearService(authDAO, gameDAO, userDAO);
         GameService gameService = new GameService(authDAO, gameDAO);
 
+        WebSocketHandler webSocketHandler = new WebSocketHandler();
+
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("/web");
+
+        Spark.webSocket("/ws", webSocketHandler);
 
         HandlerRegistry handlerRegistry = new HandlerRegistry(clearService, gameService, userService);
         registerEndpoints(handlerRegistry);
