@@ -6,6 +6,7 @@ import exception.ResponseException;
 
 import websocket.commands.*;
 import websocket.messages.*;
+import websocket.messages.Error;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -40,6 +41,9 @@ public class WebSocketFacade extends Endpoint {
                                 Notification notification = new Gson().fromJson(message, Notification.class);
                                 notificationHandler.notify(notification);
                                 break;
+                            case ERROR:
+                                Error error = new Gson().fromJson(message, Error.class);
+                                notificationHandler.report(error);
                         }
                     } catch (JsonSyntaxException ex) {
                         System.out.println("Failed to deserialize message: " + ex.getMessage());

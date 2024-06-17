@@ -12,11 +12,20 @@ import java.util.Collection;
 public class ChessGame {
     private ChessBoard board;
     private TeamColor turn;
+    private boolean completionStatus;
 
     public ChessGame() {
         this.turn = TeamColor.WHITE;
         this.board = new ChessBoard();
         this.board.resetBoard();
+        this.completionStatus = false;
+    }
+
+    public ChessGame(ChessBoard board, boolean completionStatus) {
+        this.turn = TeamColor.WHITE;
+        this.board = board;
+        this.board.resetBoard();
+        this.completionStatus = completionStatus;
     }
 
     /**
@@ -81,25 +90,28 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (board.getPiece(move.getStartPosition()) == null) throw new InvalidMoveException("No piece");
-        if (!turn.equals(board.getPiece(move.getStartPosition()).getTeamColor())) throw new InvalidMoveException("Wrong turn");
-        ArrayList<ChessMove> validatedMoves = new ArrayList<>(validMoves(move.getStartPosition()));
-        boolean valid = false;
-        for (ChessMove checkMove : validatedMoves) {
-            if (checkMove.equals(move)) {
-                ChessPiece promotionPiece = board.getPiece(move.getStartPosition());
-                if (move.getPromotionPiece() != null) {
-                    promotionPiece = new ChessPiece(promotionPiece.getTeamColor(), move.getPromotionPiece());
+        if (!completionStatus) {
+            if (board.getPiece(move.getStartPosition()) == null) throw new InvalidMoveException("No piece");
+            if (!turn.equals(board.getPiece(move.getStartPosition()).getTeamColor()))
+                throw new InvalidMoveException("Wrong turn");
+            ArrayList<ChessMove> validatedMoves=new ArrayList<>(validMoves(move.getStartPosition()));
+            boolean valid=false;
+            for (ChessMove checkMove : validatedMoves) {
+                if (checkMove.equals(move)) {
+                    ChessPiece promotionPiece=board.getPiece(move.getStartPosition());
+                    if (move.getPromotionPiece() != null) {
+                        promotionPiece=new ChessPiece(promotionPiece.getTeamColor(), move.getPromotionPiece());
+                    }
+                    board.addPiece(move.getEndPosition(), promotionPiece);
+                    board.addPiece(move.getStartPosition(), null);
+                    valid=true;
+                    break;
                 }
-                board.addPiece(move.getEndPosition(), promotionPiece);
-                board.addPiece(move.getStartPosition(), null);
-                valid = true;
-                break;
             }
+            if (!valid) throw new InvalidMoveException("Invalid move");
+            if (turn.equals(TeamColor.WHITE)) turn=TeamColor.BLACK;
+            else if (turn.equals(TeamColor.BLACK)) turn=TeamColor.WHITE;
         }
-        if (!valid) throw new InvalidMoveException("Invalid move");
-        if (turn.equals(TeamColor.WHITE)) turn = TeamColor.BLACK;
-        else if (turn.equals(TeamColor.BLACK)) turn = TeamColor.WHITE;
     }
 
     private ChessPosition findTheKing(TeamColor teamColor) {
@@ -177,6 +189,7 @@ public class ChessGame {
                     return false;
                 }
             }
+            completionStatus = true;
             return true;
         }
         return false;
@@ -194,6 +207,7 @@ public class ChessGame {
         for (ChessMove move : getAllMovesByTeam(teamColor)) {
             validatedMoves.addAll(validMoves(move.getStartPosition()));
         }
+        completionStatus = true;
         return !isInCheck(teamColor) && (validatedMoves.isEmpty());
     }
 
@@ -213,5 +227,13 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;
+    }
+
+    public boolean getCompletionStatus() {
+        return completionStatus;
+    }
+
+    public void setCompletionStatus(boolean completionStatus) {
+        this.completionStatus=completionStatus;
     }
 }

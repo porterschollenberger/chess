@@ -3,11 +3,13 @@ package client;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
+import dataaccess.GameDAO;
 import exception.ResponseException;
 import model.UserData;
 import facade.ServerFacade;
 import response.LoginResponse;
 import response.RegisterResponse;
+import sql.SQLGameDAO;
 import ui.BoardDrawer;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
@@ -205,16 +207,21 @@ public class Client {
     }
 
     public String move(String... params) {
-        // parse the move string to be a move
         return "";
     }
 
     public String resign() throws ResponseException {
         assertPlaying();
-        ws.resign(clientInfo.getAuthToken(), clientInfo.getGameID());
-        // find a way to stop moves being made in the game, not let you resign multiple times,
-        // and not let other player resign
-        return "";
+        GameDAO gameDAO = new SQLGameDAO();
+        setChessGame(gameDAO.getGame(clientInfo.getGameID()).game());
+        if (!chessGame.getCompletionStatus()) {
+            ws.resign(clientInfo.getAuthToken(), clientInfo.getGameID());
+            setChessGame(gameDAO.getGame(clientInfo.getGameID()).game());
+//            chessGame.setCompletionStatus(true);
+            return "";
+        } else {
+            throw new RuntimeException("Game has already ended");
+        }
     }
 
     public String highlight(String... params) throws ResponseException {
@@ -252,7 +259,7 @@ public class Client {
         this.chessGame = game;
     }
 
-    public ChessPosition parseChessPosition(String userInput) {
+    private ChessPosition parseChessPosition(String userInput) {
         String rowLetter = userInput.substring(0,1);
         String[] rowLetters = { "a", "b", "c", "d", "e", "f", "g", "h" };
         int col = 0;
@@ -266,5 +273,9 @@ public class Client {
         }
         int row = Integer.parseInt(userInput.substring(1,2));
         return new ChessPosition(row, col);
+    }
+
+    private ChessMove parseChessMove(String userInput) {
+        return new ChessMove(new ChessPosition(1, 1), new ChessPosition(2,2), null);
     }
 }

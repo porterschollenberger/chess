@@ -8,10 +8,7 @@ import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.api.annotations.*;
 import sql.SQLAuthDAO;
 import sql.SQLGameDAO;
 import websocket.commands.Connect;
@@ -56,9 +53,14 @@ public class WebSocketHandler {
                 break;
             case RESIGN:
                 Resign resignCommand = new Gson().fromJson(message, Resign.class);
-                resign(resignCommand.getGameID(), getUsername(resignCommand.getAuthToken()));
+                resign(session, resignCommand.getGameID(), getUsername(resignCommand.getAuthToken()));
                 break;
         }
+    }
+
+    @OnWebSocketError
+    public void onError(Session session, Throwable error) {
+
     }
 
     private void connect(Session session, String authToken, Integer gameID) throws IOException {
@@ -84,9 +86,10 @@ public class WebSocketHandler {
         connections.broadcast(gameID, notification, session);
     }
 
-    private void resign(Integer gameID, String username) throws IOException {
+    private void resign(Session session, Integer gameID, String username) throws IOException {
         String message = String.format("%s resigned", username);
-        var notification = new Notification(message);
+        Notification notification = new Notification(message);
+        setGame(gameID, new ChessGame(getGame(gameID).getBoard(), true));
         connections.broadcast(gameID, notification, null);
     }
 
@@ -111,5 +114,9 @@ public class WebSocketHandler {
 
     private ChessGame getGame(Integer gameID) {
         return gameDAO.getGame(gameID).game();
+    }
+
+    private void setGame(Integer gameID, ChessGame game) {
+        gameDAO.updateGame(gameID, game);
     }
 }
