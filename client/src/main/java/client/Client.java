@@ -158,9 +158,11 @@ public class Client {
     public String observe(String... params) throws ResponseException {
         assertLoggedIn();
         if (params.length == 1) {
-            BoardDrawer.drawWhiteBoard();
             clientInfo.setPlayerColor("observer");
+            clientInfo.setGameID(Integer.valueOf(params[0]));
             state = State.PLAYING;
+            ws.connect(clientInfo.getAuthToken(), clientInfo.getGameID(), clientInfo.getUsername(), clientInfo.getPlayerColor());
+            BoardDrawer.drawWhiteBoard();
             return "";
         }
         throw new ResponseException("Expected: <ID>");

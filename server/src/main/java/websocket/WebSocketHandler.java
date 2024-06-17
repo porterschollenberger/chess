@@ -47,7 +47,12 @@ public class WebSocketHandler {
 
     private void connect(Integer gameID, Session session, String username, String color) throws IOException {
         connections.add(gameID, session);
-        var message = String.format("%s joined the game as %s", username, color);
+        String message;
+        if (color.equals("observer")) {
+            message = String.format("%s is watching the game as an %s", username, color);
+        } else {
+            message = String.format("%s joined the game as %s", username, color);
+        }
         var notification = new Notification(message);
         connections.broadcast(gameID, notification, session);
     }
