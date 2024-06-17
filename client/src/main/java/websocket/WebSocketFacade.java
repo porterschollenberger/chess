@@ -35,9 +35,11 @@ public class WebSocketFacade extends Endpoint {
                             case LOAD_GAME:
                                 LoadGame loadGame = new Gson().fromJson(message, LoadGame.class);
                                 notificationHandler.load(loadGame);
+                                break;
                             case NOTIFICATION:
                                 Notification notification = new Gson().fromJson(message, Notification.class);
                                 notificationHandler.notify(notification);
+                                break;
                         }
                     } catch (JsonSyntaxException ex) {
                         System.out.println("Failed to deserialize message: " + ex.getMessage());

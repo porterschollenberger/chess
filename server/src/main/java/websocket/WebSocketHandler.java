@@ -73,7 +73,7 @@ public class WebSocketHandler {
         }
         var notification = new Notification(message);
         var loadGame = new LoadGame(getGame(gameID));
-        connections.broadcast(gameID, loadGame, null);
+        connections.broadcastRoot(gameID, loadGame, session);
         connections.broadcast(gameID, notification, session);
     }
 
