@@ -10,66 +10,66 @@ import static ui.EscapeSequences.*;
 
 public class BoardDrawer {
     private static final String EMPTY = " ";
-    private static final PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+    private static final PrintStream OUT= new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
     public static void drawWhiteBoard(ChessGame chessGame) {
         ChessBoard board = chessGame.getBoard();
         board.resetBoard();
-        out.print(ERASE_SCREEN);
-        out.println();
-        drawHeadersWhite(out);
-        drawChessBoardWhite(out, board);
-        drawHeadersWhite(out);
-        out.print(RESET);
+        OUT.print(ERASE_SCREEN);
+        OUT.println();
+        drawHeadersWhite(OUT);
+        drawChessBoardWhite(OUT, board);
+        drawHeadersWhite(OUT);
+        OUT.print(RESET);
     }
 
     public static void drawWhiteBoard(ChessGame chessGame, ChessPosition checkPosition) {
         ChessBoard board = chessGame.getBoard();
         board.resetBoard();
-        out.print(ERASE_SCREEN);
-        out.println();
-        drawHeadersWhite(out);
+        OUT.print(ERASE_SCREEN);
+        OUT.println();
+        drawHeadersWhite(OUT);
 
         Collection<ChessMove> validMoves;
         if (checkPosition != null) {
             validMoves = chessGame.validMoves(checkPosition);
-            drawChessBoardWhite(out, board, validMoves);
+            drawChessBoardWhite(OUT, board, validMoves);
         } else {
-            drawChessBoardWhite(out, board);
+            drawChessBoardWhite(OUT, board);
         }
 
-        drawHeadersWhite(out);
-        out.print(RESET);
+        drawHeadersWhite(OUT);
+        OUT.print(RESET);
     }
 
     public static void drawBlackBoard(ChessGame chessGame) {
         ChessBoard board = chessGame.getBoard();
         board.resetBoard();
-        out.print(ERASE_SCREEN);
-        out.println();
-        drawHeadersBlack(out);
-        drawChessBoardBlack(out, board);
-        drawHeadersBlack(out);
-        out.print(RESET);
+        OUT.print(ERASE_SCREEN);
+        OUT.println();
+        drawHeadersBlack(OUT);
+        drawChessBoardBlack(OUT, board);
+        drawHeadersBlack(OUT);
+        OUT.print(RESET);
     }
 
     public static void drawBlackBoard(ChessGame chessGame, ChessPosition checkPosition) {
         ChessBoard board = chessGame.getBoard();
         board.resetBoard();
-        out.print(ERASE_SCREEN);
-        out.println();
-        drawHeadersBlack(out);
+        OUT.print(ERASE_SCREEN);
+        OUT.println();
+        drawHeadersBlack(OUT);
 
         Collection<ChessMove> validMoves;
         if (checkPosition != null) {
             validMoves = chessGame.validMoves(checkPosition);
-            drawChessBoardBlack(out, board, validMoves);
+            drawChessBoardBlack(OUT, board, validMoves);
         } else {
-            drawChessBoardBlack(out, board);
+            drawChessBoardBlack(OUT, board);
         }
 
-        drawHeadersWhite(out);
-        out.print(RESET);
+        drawHeadersWhite(OUT);
+        OUT.print(RESET);
     }
 
     private static void drawHeadersBlack(PrintStream out) {
@@ -212,16 +212,16 @@ public class BoardDrawer {
         if (!validMoves.isEmpty()) {
             for (ChessMove validMove : validMoves) {
                 if (validMove.getStartPosition().equals(currentPosition)) {
-                    setYellow(out);
+                    setYellow(OUT);
                 } else if (validMove.getEndPosition().equals(currentPosition)) {
-                    setGreen(out);
+                    setGreen(OUT);
                     break;
                 } else {
-                    setWhite(out);
+                    setWhite(OUT);
                 }
             }
         } else {
-            setWhite(out);
+            setWhite(OUT);
         }
     }
 
@@ -229,16 +229,16 @@ public class BoardDrawer {
         if (!validMoves.isEmpty()) {
             for (ChessMove validMove : validMoves) {
                 if (validMove.getStartPosition().equals(currentPosition)) {
-                    setYellow(out);
+                    setYellow(OUT);
                 } else if (validMove.getEndPosition().equals(currentPosition)) {
-                    setDarkGreen(out);
+                    setDarkGreen(OUT);
                     break;
                 } else {
-                    setBlack(out);
+                    setBlack(OUT);
                 }
             }
         } else {
-            setBlack(out);
+            setBlack(OUT);
         }
     }
 

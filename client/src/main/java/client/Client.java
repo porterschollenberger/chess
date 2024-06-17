@@ -268,8 +268,4 @@ public class Client {
         int row = Integer.parseInt(userInput.substring(1,2));
         return new ChessPosition(row, col);
     }
-
-    private ChessMove parseChessMove(String userInput) {
-        return new ChessMove(new ChessPosition(1, 1), new ChessPosition(2,2), null);
-    }
 }

@@ -232,8 +232,4 @@ public class ChessGame {
     public boolean getCompletionStatus() {
         return completionStatus;
     }
-
-    public void setCompletionStatus(boolean completionStatus) {
-        this.completionStatus=completionStatus;
-    }
 }
