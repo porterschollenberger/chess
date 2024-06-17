@@ -37,6 +37,7 @@ public class WebSocketHandler {
                 connect(connectCommand.getGameID(), session, connectCommand.getUsername(), connectCommand.getColor());
                 break;
             case LEAVE:
+                leave(session);
                 break;
             case MAKE_MOVE:
                 break;
@@ -55,5 +56,9 @@ public class WebSocketHandler {
         }
         var notification = new Notification(message);
         connections.broadcast(gameID, notification, session);
+    }
+
+    private void leave(Session session) {
+        connections.remove(session);
     }
 }

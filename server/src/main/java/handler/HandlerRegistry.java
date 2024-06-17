@@ -122,14 +122,19 @@ public class HandlerRegistry {
         });
     }
 
-    private void joinGameService(GameService gameService) {
+    private void joinGameHandler(GameService gameService) {
         handlers.put("joinGame", (req, res) -> {
             try {
                 String authToken = req.headers("authorization");
                 JoinGameRequest requestBody = gson.fromJson(req.body(), JoinGameRequest.class);
                 String playerColor = requestBody.playerColor();
-                int gameId = requestBody.gameID();
-                gameService.joinGame(authToken, playerColor, gameId);
+                int gameID = requestBody.gameID();
+                boolean isLeaving = requestBody.isLeaving();
+                if (isLeaving) {
+                    gameService.leaveGame(gameID, playerColor);
+                } else {
+                    gameService.joinGame(authToken, playerColor, gameID);
+                }
                 res.status(200);
                 return gson.toJson(new GenericResponse());
             } catch (BadRequestException e) {
@@ -155,7 +160,7 @@ public class HandlerRegistry {
         logoutHandler(userService);
         listGamesHandler(gameService);
         createGameHandler(gameService);
-        joinGameService(gameService);
+        joinGameHandler(gameService);
     }
 
     public JsonHandler getHandler(String action) {

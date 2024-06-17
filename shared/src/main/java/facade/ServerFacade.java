@@ -50,7 +50,12 @@ public class ServerFacade {
 
     public GenericResponse joinGame(String playerColor, int gameID) throws ResponseException {
         var path = "/game";
-        return makeRequest("PUT", path, new JoinGameRequest(playerColor, gameID), GenericResponse.class);
+        return makeRequest("PUT", path, new JoinGameRequest(playerColor, gameID, false), GenericResponse.class);
+    }
+
+    public GenericResponse leaveGame(String playerColor, int gameID) throws ResponseException {
+        var path = "/game";
+        return makeRequest("PUT", path, new JoinGameRequest(playerColor, gameID, true), GenericResponse.class);
     }
 
     public GenericResponse clear() {

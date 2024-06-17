@@ -59,4 +59,12 @@ public class GameService {
             throw new BadRequestException("Player color " + playerColor + " is not valid.");
         }
     }
+
+    public void leaveGame(int gameID, String playerColor) {
+        if (playerColor.equalsIgnoreCase("white")) {
+            gameDAO.updateGame(gameID, "whiteUsername", null);
+        } else if (playerColor.equalsIgnoreCase("black")) {
+            gameDAO.updateGame(gameID, "blackUsername", null);
+        }
+    }
 }
