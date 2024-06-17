@@ -48,13 +48,13 @@ public class WebSocketHandler {
                 break;
             case LEAVE:
                 Leave leaveCommand = new Gson().fromJson(message, Leave.class);
-                leave(session, leaveCommand.getGameID(), leaveCommand.getUsername());
+                leave(session, leaveCommand.getGameID(), getUsername(leaveCommand.getAuthToken()));
                 break;
             case MAKE_MOVE:
                 break;
             case RESIGN:
                 Resign resignCommand = new Gson().fromJson(message, Resign.class);
-                resign(resignCommand.getGameID(), resignCommand.getUsername());
+                resign(resignCommand.getGameID(), getUsername(resignCommand.getAuthToken()));
                 break;
         }
     }

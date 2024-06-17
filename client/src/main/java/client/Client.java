@@ -190,7 +190,7 @@ public class Client {
     public String leave() throws ResponseException {
         assertPlayingOrObserving();
         server.leaveGame(clientInfo.getPlayerColor(), clientInfo.getGameID());
-        ws.leave(clientInfo.getAuthToken(), clientInfo.getGameID(), clientInfo.getUsername());
+        ws.leave(clientInfo.getAuthToken(), clientInfo.getGameID());
         clientInfo.setPlayerColor(null);
         clientInfo.setGameID(null);
         state = State.LOGGEDIN;
@@ -205,7 +205,7 @@ public class Client {
 
     public String resign() throws ResponseException {
         assertPlaying();
-        ws.resign(clientInfo.getAuthToken(), clientInfo.getGameID(), clientInfo.getUsername());
+        ws.resign(clientInfo.getAuthToken(), clientInfo.getGameID());
         // find a way to stop moves being made in the game, not let you resign multiple times,
         // and not let other player resign
         return "";
