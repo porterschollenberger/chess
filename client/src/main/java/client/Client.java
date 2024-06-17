@@ -3,17 +3,27 @@ package client;
 import exception.ResponseException;
 import model.UserData;
 import facade.ServerFacade;
+import response.LoginResponse;
+import response.RegisterResponse;
 import ui.BoardDrawer;
+import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
+import websocket.messages.Notification;
+
 
 import java.util.Arrays;
 
 public class Client {
     private final ServerFacade server;
     private State state = State.LOGGEDOUT;
+    private WebSocketFacade ws;
+    private final NotificationHandler notificationHandler;
+    private final ClientInfo clientInfo = new ClientInfo(null, null, null, null);
 
-    public Client(int port) {
+    public Client(int port, NotificationHandler notificationHandler) {
         server = new ServerFacade(port);
-        server.clear();
+        this.notificationHandler = notificationHandler;
+        server.clear(); // This should be removed later when testing is complete.
     }
 
     public String eval(String input) {
@@ -30,6 +40,10 @@ public class Client {
                 case "list" -> list();
                 case "join" -> join(params);
                 case "observe" -> observe(params);
+                case "redraw" -> redraw();
+                case "leave" -> leave();
+                case "move" -> move(params);
+                case "resign" -> resign();
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -45,7 +59,7 @@ public class Client {
                quit - exit the program
                help - list available commands
                """;
-        } else {
+        } else if (state == State.LOGGEDIN) {
             return """
                create <NAME> - create a chess game
                list - shows all games
@@ -55,26 +69,43 @@ public class Client {
                quit - exit the program
                help - list available commands
                """;
+        } else if (state == State.PLAYING) {
+            return """
+                   redraw - redraw the chessboard on your screen
+                   move <startSquare> <endSquare> - move a chess piece (ex. move e2 e4)
+                   leave - leave the chess game
+                   resign - forfeit the match and end the game
+                   highlight <square> - shows the legal moves for the piece at the specified square
+                   help - list available commands
+                   """;
+        } else {
+            throw new RuntimeException("Invalid state");
         }
     }
 
     public String register(String... params) throws ResponseException {
-        assertNotLoggedIn();
+        assertLoggedOut();
         if (params.length == 3) {
             UserData user = new UserData(params[0], params[1], params[2]);
-            server.register(user);
+            RegisterResponse response = server.register(user);
             server.login(params[0], params[1]);
             state = State.LOGGEDIN;
+            clientInfo.setAuthToken(response.getAuthToken());
+            clientInfo.setUsername(response.getUsername());
+            ws = new WebSocketFacade("http://localhost:8080", notificationHandler);
             return "You registered successfully! You are now logged in.";
         }
         throw new ResponseException("Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }
 
     public String login(String... params) throws ResponseException {
-        assertNotLoggedIn();
+        assertLoggedOut();
         if (params.length == 2) {
-            server.login(params[0], params[1]);
+            LoginResponse response = server.login(params[0], params[1]);
             state = State.LOGGEDIN;
+            clientInfo.setAuthToken(response.getAuthToken());
+            clientInfo.setUsername(response.getUsername());
+            ws = new WebSocketFacade("http://localhost:8080", notificationHandler);
             return String.format("You signed in as %s", params[0]);
         }
         throw new ResponseException("Expected: <USERNAME> <PASSWORD>");
@@ -115,6 +146,10 @@ public class Client {
             } else {
                 BoardDrawer.drawBlackBoard();
             }
+            clientInfo.setPlayerColor(params[1].toLowerCase());
+            clientInfo.setGameID(Integer.valueOf(params[0]));
+            state = State.PLAYING;
+            ws.connect(clientInfo.getAuthToken(), clientInfo.getGameID(), clientInfo.getUsername(), clientInfo.getPlayerColor());
             return "";
         }
         throw new ResponseException("Expected: <ID> [WHITE|BLACK]");
@@ -124,20 +159,48 @@ public class Client {
         assertLoggedIn();
         if (params.length == 1) {
             BoardDrawer.drawWhiteBoard();
+            clientInfo.setPlayerColor("observer");
+            state = State.PLAYING;
             return "";
         }
         throw new ResponseException("Expected: <ID>");
     }
 
+    private String redraw() {
+        return "";
+    }
+
+    public String leave() throws ResponseException {
+        assertPlaying();
+        ws.leave(clientInfo.getAuthToken(), clientInfo.getGameID());
+        state = State.LOGGEDIN;
+        return String.format("%s left the game", clientInfo.getUsername());
+    }
+
+    public String move(String... params) {
+        // parse the move string to be a move
+        return "";
+    }
+
+    public String resign() {
+        return "";
+    }
+
     private void assertLoggedIn() throws ResponseException {
-        if (state == State.LOGGEDOUT) {
-            throw new ResponseException("You must log in");
+        if (state != State.LOGGEDIN) {
+            throw new ResponseException("You can't do that now. Type \"help\" to see the available commands");
         }
     }
 
-    private void assertNotLoggedIn() throws ResponseException {
-        if (state == State.LOGGEDIN) {
-            throw new ResponseException("You are already logged in");
+    private void assertLoggedOut() throws ResponseException {
+        if (state != State.LOGGEDOUT) {
+            throw new ResponseException("You can't do that now. Type \"help\" to see the available commands");
+        }
+    }
+
+    private void assertPlaying() throws ResponseException {
+        if (state != State.PLAYING) {
+            throw new ResponseException("You can't do that now. Type \"help\" to see the available commands");
         }
     }
 }
