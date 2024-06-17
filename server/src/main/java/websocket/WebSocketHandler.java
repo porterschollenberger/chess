@@ -105,7 +105,7 @@ public class WebSocketHandler {
         } else if (username.equals(gameData.blackUsername())) {
             return "black";
         } else {
-            throw new RuntimeException("Could not find any username that matches");
+            return "observer";
         }
     }
 
