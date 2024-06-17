@@ -90,6 +90,8 @@ public class WebSocketHandler {
         String message = String.format("%s resigned", username);
         Notification notification = new Notification(message);
         setGame(gameID, new ChessGame(getGame(gameID).getBoard(), true));
+        LoadGame loadGame = new LoadGame(getGame(gameID));
+        connections.broadcast(gameID, loadGame, null);
         connections.broadcast(gameID, notification, null);
     }
 

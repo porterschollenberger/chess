@@ -3,13 +3,11 @@ package client;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
-import dataaccess.GameDAO;
 import exception.ResponseException;
 import model.UserData;
 import facade.ServerFacade;
 import response.LoginResponse;
 import response.RegisterResponse;
-import sql.SQLGameDAO;
 import ui.BoardDrawer;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
@@ -212,12 +210,8 @@ public class Client {
 
     public String resign() throws ResponseException {
         assertPlaying();
-        GameDAO gameDAO = new SQLGameDAO();
-        setChessGame(gameDAO.getGame(clientInfo.getGameID()).game());
         if (!chessGame.getCompletionStatus()) {
             ws.resign(clientInfo.getAuthToken(), clientInfo.getGameID());
-            setChessGame(gameDAO.getGame(clientInfo.getGameID()).game());
-//            chessGame.setCompletionStatus(true);
             return "";
         } else {
             throw new RuntimeException("Game has already ended");
