@@ -49,5 +49,6 @@ public class Repl implements NotificationHandler {
         ChessBoard board = loadGame.getChessGame().getBoard();
         client.setChessBoard(board);
         client.redraw(board);
+        printPrompt();
     }
 }

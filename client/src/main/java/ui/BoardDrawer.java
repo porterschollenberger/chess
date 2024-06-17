@@ -28,6 +28,7 @@ public class BoardDrawer {
     public static void drawBlackBoard(ChessBoard board) {
         board.resetBoard();
         out.print(ERASE_SCREEN);
+        out.println();
         drawHeadersBlack(out);
         drawChessBoardBlack(out, board);
         drawHeadersBlack(out);
