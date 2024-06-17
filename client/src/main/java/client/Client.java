@@ -19,7 +19,7 @@ public class Client {
     private WebSocketFacade ws;
     private final NotificationHandler notificationHandler;
     private final ClientInfo clientInfo = new ClientInfo(null, null, null, null);
-    private final ChessBoard board = new ChessBoard();
+    private ChessBoard chessBoard;
 
     public Client(int port, NotificationHandler notificationHandler) {
         server = new ServerFacade(port);
@@ -41,7 +41,7 @@ public class Client {
                 case "list" -> list();
                 case "join" -> join(params);
                 case "observe" -> observe(params);
-                case "redraw" -> redraw();
+                case "redraw" -> redraw(chessBoard);
                 case "leave" -> leave();
                 case "move" -> move(params);
                 case "resign" -> resign();
@@ -150,15 +150,10 @@ public class Client {
         assertLoggedIn();
         if (params.length == 2) {
             server.joinGame(params[1], Integer.parseInt(params[0]));
-            if (params[1].equalsIgnoreCase("WHITE")) {
-                BoardDrawer.drawWhiteBoard(board);
-            } else {
-                BoardDrawer.drawBlackBoard(board);
-            }
             clientInfo.setPlayerColor(params[1].toLowerCase());
             clientInfo.setGameID(Integer.valueOf(params[0]));
             state = State.PLAYING;
-            ws.connect(clientInfo.getAuthToken(), clientInfo.getGameID(), clientInfo.getUsername(), clientInfo.getPlayerColor());
+            ws.connect(clientInfo.getAuthToken(), clientInfo.getGameID());
             return "";
         }
         throw new ResponseException("Expected: <ID> [WHITE|BLACK]");
@@ -170,14 +165,13 @@ public class Client {
             clientInfo.setPlayerColor("observer");
             clientInfo.setGameID(Integer.valueOf(params[0]));
             state = State.OBSERVING;
-            ws.connect(clientInfo.getAuthToken(), clientInfo.getGameID(), clientInfo.getUsername(), clientInfo.getPlayerColor());
-            BoardDrawer.drawWhiteBoard(board);
+            ws.connect(clientInfo.getAuthToken(), clientInfo.getGameID());
             return "";
         }
         throw new ResponseException("Expected: <ID>");
     }
 
-    public String redraw() throws ResponseException {
+    public String redraw(ChessBoard board) throws ResponseException {
         assertPlayingOrObserving();
         if (clientInfo.getPlayerColor().equals("white") || clientInfo.getPlayerColor().equals("observer")) {
             BoardDrawer.drawWhiteBoard(board);
@@ -238,5 +232,9 @@ public class Client {
         if (state != State.PLAYING && state != State.OBSERVING) {
             throw new ResponseException("You can't do that now. Type \"help\" to see the available commands");
         }
+    }
+
+    public void setChessBoard(ChessBoard board) {
+        this.chessBoard = board;
     }
 }

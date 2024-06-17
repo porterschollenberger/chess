@@ -1,6 +1,9 @@
 package client;
 
+import chess.ChessBoard;
+import exception.ResponseException;
 import websocket.NotificationHandler;
+import websocket.messages.LoadGame;
 import websocket.messages.Notification;
 
 import java.util.Scanner;
@@ -40,5 +43,11 @@ public class Repl implements NotificationHandler {
     public void notify(Notification notification) {
         System.out.println(notification.getMessage());
         printPrompt();
+    }
+
+    public void load(LoadGame loadGame) throws ResponseException {
+        ChessBoard board = loadGame.getChessGame().getBoard();
+        client.setChessBoard(board);
+        client.redraw(board);
     }
 }

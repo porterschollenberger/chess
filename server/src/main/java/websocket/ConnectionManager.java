@@ -2,7 +2,9 @@ package websocket;
 
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.LoadGame;
 import websocket.messages.Notification;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,14 +22,14 @@ public class ConnectionManager {
         gameSessions.forEach((gameID, sessions) -> sessions.removeIf(s -> s.equals(session)));
     }
 
-    public void broadcast(Integer gameID, Notification notification, Session excludeSession) throws IOException {
+    public void broadcast(Integer gameID, ServerMessage serverMessage, Session excludeSession) throws IOException {
         List<Session> sessions = gameSessions.get(gameID);
         if (sessions != null) {
             var removeList = new ArrayList<Session>();
             for (Session session : sessions) {
                 if (session.isOpen()) {
                     if (!session.equals(excludeSession)) {
-                        String jsonString=new Gson().toJson(notification);
+                        String jsonString=new Gson().toJson(serverMessage);
                         session.getRemote().sendString(jsonString);
                     }
                 } else {

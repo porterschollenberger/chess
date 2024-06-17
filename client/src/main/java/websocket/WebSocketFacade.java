@@ -34,6 +34,7 @@ public class WebSocketFacade extends Endpoint {
                         switch (serverMessage.getServerMessageType()) {
                             case LOAD_GAME:
                                 LoadGame loadGame = new Gson().fromJson(message, LoadGame.class);
+                                notificationHandler.load(loadGame);
                             case NOTIFICATION:
                                 Notification notification = new Gson().fromJson(message, Notification.class);
                                 notificationHandler.notify(notification);
@@ -41,6 +42,8 @@ public class WebSocketFacade extends Endpoint {
                     } catch (JsonSyntaxException ex) {
                         System.out.println("Failed to deserialize message: " + ex.getMessage());
                         ex.printStackTrace();
+                    } catch (ResponseException e) {
+                        throw new RuntimeException(e);
                     }
                 }
             });
@@ -54,7 +57,7 @@ public class WebSocketFacade extends Endpoint {
         this.session = session;
     }
 
-    public void connect(String authToken, Integer gameID, String username, String color) throws ResponseException {
+    public void connect(String authToken, Integer gameID) throws ResponseException {
         try {
             var action = new Connect(authToken, gameID);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));

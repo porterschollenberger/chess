@@ -1,5 +1,6 @@
 package websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
@@ -17,6 +18,7 @@ import websocket.commands.Connect;
 import websocket.commands.Leave;
 import websocket.commands.Resign;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGame;
 import websocket.messages.Notification;
 
 import java.io.IOException;
@@ -70,6 +72,8 @@ public class WebSocketHandler {
             message = String.format("%s joined the game as %s", username, color);
         }
         var notification = new Notification(message);
+        var loadGame = new LoadGame(getGame(gameID));
+        connections.broadcast(gameID, loadGame, null);
         connections.broadcast(gameID, notification, session);
     }
 
@@ -88,6 +92,9 @@ public class WebSocketHandler {
 
     private String getUsername(String authToken) {
         AuthData authData = authDAO.getAuth(authToken);
+        if (authData == null) {
+            throw new RuntimeException("AuthToken was not valid");
+        }
         return authData.username();
     }
 
@@ -100,5 +107,9 @@ public class WebSocketHandler {
         } else {
             throw new RuntimeException("Could not find any username that matches");
         }
+    }
+
+    private ChessGame getGame(Integer gameID) {
+        return gameDAO.getGame(gameID).game();
     }
 }
