@@ -1,6 +1,8 @@
 package client;
 
-import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import exception.ResponseException;
 import model.UserData;
 import facade.ServerFacade;
@@ -19,7 +21,7 @@ public class Client {
     private WebSocketFacade ws;
     private final NotificationHandler notificationHandler;
     private final ClientInfo clientInfo = new ClientInfo(null, null, null, null);
-    private ChessBoard chessBoard;
+    private ChessGame chessGame;
 
     public Client(int port, NotificationHandler notificationHandler) {
         server = new ServerFacade(port);
@@ -41,11 +43,11 @@ public class Client {
                 case "list" -> list();
                 case "join" -> join(params);
                 case "observe" -> observe(params);
-                case "redraw" -> redraw(chessBoard);
+                case "redraw" -> redraw(chessGame);
                 case "leave" -> leave();
                 case "move" -> move(params);
                 case "resign" -> resign();
-                case "highlight" -> highlight();
+                case "highlight" -> highlight(params);
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -171,12 +173,22 @@ public class Client {
         throw new ResponseException("Expected: <ID>");
     }
 
-    public String redraw(ChessBoard board) throws ResponseException {
+    public String redraw(ChessGame chessGame) throws ResponseException {
         assertPlayingOrObserving();
         if (clientInfo.getPlayerColor().equals("white") || clientInfo.getPlayerColor().equals("observer")) {
-            BoardDrawer.drawWhiteBoard(board);
+            BoardDrawer.drawWhiteBoard(chessGame);
         } else if (clientInfo.getPlayerColor().equals("black")) {
-            BoardDrawer.drawBlackBoard(board);
+            BoardDrawer.drawBlackBoard(chessGame);
+        }
+        return "";
+    }
+
+    public String redraw(ChessGame chessGame, ChessPosition checkMove) throws ResponseException {
+        assertPlayingOrObserving();
+        if (clientInfo.getPlayerColor().equals("white") || clientInfo.getPlayerColor().equals("observer")) {
+            BoardDrawer.drawWhiteBoard(chessGame, checkMove);
+        } else if (clientInfo.getPlayerColor().equals("black")) {
+            BoardDrawer.drawBlackBoard(chessGame, checkMove);
         }
         return "";
     }
@@ -205,8 +217,10 @@ public class Client {
         return "";
     }
 
-    public String highlight() throws ResponseException {
+    public String highlight(String... params) throws ResponseException {
         assertPlayingOrObserving();
+        ChessPosition checkPosition = parseChessPosition(params[0]);
+        redraw(chessGame, checkPosition);
         return "";
     }
 
@@ -234,7 +248,23 @@ public class Client {
         }
     }
 
-    public void setChessBoard(ChessBoard board) {
-        this.chessBoard = board;
+    public void setChessGame(ChessGame game) {
+        this.chessGame = game;
+    }
+
+    public ChessPosition parseChessPosition(String userInput) {
+        String rowLetter = userInput.substring(0,1);
+        String[] rowLetters = { "a", "b", "c", "d", "e", "f", "g", "h" };
+        int col = 0;
+        for (int i = 0; i < 8; i++) {
+            if (rowLetters[i].equals(rowLetter)) {
+                col = i + 1;
+            }
+        }
+        if (col == 0) {
+            throw new RuntimeException("Invalid move syntax");
+        }
+        int row = Integer.parseInt(userInput.substring(1,2));
+        return new ChessPosition(row, col);
     }
 }

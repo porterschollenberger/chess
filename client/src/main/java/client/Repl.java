@@ -46,9 +46,8 @@ public class Repl implements NotificationHandler {
     }
 
     public void load(LoadGame loadGame) throws ResponseException {
-        ChessBoard board = loadGame.getChessGame().getBoard();
-        client.setChessBoard(board);
-        client.redraw(board);
+        client.setChessGame(loadGame.getChessGame());
+        client.redraw(loadGame.getChessGame());
         printPrompt();
     }
 }

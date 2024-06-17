@@ -1,12 +1,10 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 import static ui.EscapeSequences.*;
 
@@ -14,24 +12,63 @@ public class BoardDrawer {
     private static final String EMPTY = " ";
     private static final PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
-
-    public static void drawWhiteBoard(ChessBoard board) {
+    public static void drawWhiteBoard(ChessGame chessGame) {
+        ChessBoard board = chessGame.getBoard();
         board.resetBoard();
         out.print(ERASE_SCREEN);
         out.println();
         drawHeadersWhite(out);
-        drawChessBoardWhite(out,board);
+        drawChessBoardWhite(out, board);
         drawHeadersWhite(out);
         out.print(RESET);
     }
 
-    public static void drawBlackBoard(ChessBoard board) {
+    public static void drawWhiteBoard(ChessGame chessGame, ChessPosition checkPosition) {
+        ChessBoard board = chessGame.getBoard();
+        board.resetBoard();
+        out.print(ERASE_SCREEN);
+        out.println();
+        drawHeadersWhite(out);
+
+        Collection<ChessMove> validMoves;
+        if (checkPosition != null) {
+            validMoves = chessGame.validMoves(checkPosition);
+            drawChessBoardWhite(out, board, validMoves);
+        } else {
+            drawChessBoardWhite(out, board);
+        }
+
+        drawHeadersWhite(out);
+        out.print(RESET);
+    }
+
+    public static void drawBlackBoard(ChessGame chessGame) {
+        ChessBoard board = chessGame.getBoard();
         board.resetBoard();
         out.print(ERASE_SCREEN);
         out.println();
         drawHeadersBlack(out);
         drawChessBoardBlack(out, board);
         drawHeadersBlack(out);
+        out.print(RESET);
+    }
+
+    public static void drawBlackBoard(ChessGame chessGame, ChessPosition checkPosition) {
+        ChessBoard board = chessGame.getBoard();
+        board.resetBoard();
+        out.print(ERASE_SCREEN);
+        out.println();
+        drawHeadersBlack(out);
+
+        Collection<ChessMove> validMoves;
+        if (checkPosition != null) {
+            validMoves = chessGame.validMoves(checkPosition);
+            drawChessBoardBlack(out, board, validMoves);
+        } else {
+            drawChessBoardBlack(out, board);
+        }
+
+        drawHeadersWhite(out);
         out.print(RESET);
     }
 
@@ -92,10 +129,32 @@ public class BoardDrawer {
         }
     }
 
+    private static void drawChessBoardBlack(PrintStream out, ChessBoard board, Collection<ChessMove> validMoves) {
+        for (int row = 1; row <= 8; row++) {
+            drawHeader(out, String.valueOf(row));
+            drawRowOfSquaresBlack(out, row, board, validMoves);
+            drawHeader(out, String.valueOf(row));
+
+            setBlack(out);
+            out.println();
+        }
+    }
+
     private static void drawChessBoardWhite(PrintStream out, ChessBoard board) {
         for (int row = 8; row >= 1; row--) {
             drawHeader(out, String.valueOf(row));
             drawRowOfSquaresWhite(out, row, board);
+            drawHeader(out, String.valueOf(row));
+
+            setBlack(out);
+            out.println();
+        }
+    }
+
+    private static void drawChessBoardWhite(PrintStream out, ChessBoard board, Collection<ChessMove> validMoves) {
+        for (int row = 8; row >= 1; row--) {
+            drawHeader(out, String.valueOf(row));
+            drawRowOfSquaresWhite(out, row, board, validMoves);
             drawHeader(out, String.valueOf(row));
 
             setBlack(out);
@@ -114,6 +173,18 @@ public class BoardDrawer {
         }
     }
 
+    private static void drawRowOfSquaresBlack(PrintStream out, int row, ChessBoard board, Collection<ChessMove> validMoves) {
+        for (int col = 1; col <= 8; col++) {
+            ChessPosition currentPosition = new ChessPosition(row, col);
+            if ((col + row % 2) % 2 == 0) {
+                drawLightSquare(validMoves, currentPosition);
+            } else {
+                drawDarkSquare(validMoves, currentPosition);
+            }
+            printPieceWithSpacing(out, board.getPiece(new ChessPosition(row, 8 - (col - 1))));
+        }
+    }
+
     private static void drawRowOfSquaresWhite(PrintStream out, int row, ChessBoard board) {
         for (int col = 1; col <= 8; col++) {
             if ((col + row % 2) % 2 == 1) {
@@ -125,8 +196,69 @@ public class BoardDrawer {
         }
     }
 
+    private static void drawRowOfSquaresWhite(PrintStream out, int row, ChessBoard board, Collection<ChessMove> validMoves) {
+        for (int col = 1; col <= 8; col++) {
+            ChessPosition currentPosition = new ChessPosition(row, col);
+            if ((col + row % 2) % 2 == 1) {
+                drawLightSquare(validMoves, currentPosition);
+            } else {
+                drawDarkSquare(validMoves, currentPosition);
+            }
+            printPieceWithSpacing(out, board.getPiece(new ChessPosition(row, col)));
+        }
+    }
+
+    private static void drawLightSquare(Collection<ChessMove> validMoves, ChessPosition currentPosition) {
+        if (!validMoves.isEmpty()) {
+            for (ChessMove validMove : validMoves) {
+                if (validMove.getStartPosition().equals(currentPosition)) {
+                    setYellow(out);
+                } else if (validMove.getEndPosition().equals(currentPosition)) {
+                    setGreen(out);
+                    break;
+                } else {
+                    setWhite(out);
+                }
+            }
+        } else {
+            setWhite(out);
+        }
+    }
+
+    private static void drawDarkSquare(Collection<ChessMove> validMoves, ChessPosition currentPosition) {
+        if (!validMoves.isEmpty()) {
+            for (ChessMove validMove : validMoves) {
+                if (validMove.getStartPosition().equals(currentPosition)) {
+                    setYellow(out);
+                } else if (validMove.getEndPosition().equals(currentPosition)) {
+                    setDarkGreen(out);
+                    break;
+                } else {
+                    setBlack(out);
+                }
+            }
+        } else {
+            setBlack(out);
+        }
+    }
+
     private static void setWhite(PrintStream out) {
         out.print(SET_BG_COLOR_WHITE);
+        out.print(SET_TEXT_COLOR_WHITE);
+    }
+
+    private static void setGreen(PrintStream out) {
+        out.print(SET_BG_COLOR_GREEN);
+        out.print(SET_TEXT_COLOR_WHITE);
+    }
+
+    private static void setDarkGreen(PrintStream out) {
+        out.print(SET_BG_COLOR_DARK_GREEN);
+        out.print(SET_TEXT_COLOR_WHITE);
+    }
+
+    private static void setYellow(PrintStream out) {
+        out.print(SET_BG_COLOR_YELLOW);
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
