@@ -119,6 +119,30 @@ public class WebSocketHandler {
 
     private void makeMove(Session session, String authToken, Integer gameID, ChessMove chessMove) throws IOException {
         GameData gameData = gameDAO.getGame(gameID);
+        if (gameData.game().getCompletionStatus()) {
+            String jsonString = new Gson().toJson(new Error("Can't make move because game is over"));
+            session.getRemote().sendString(jsonString);
+            return;
+        }
+        if (getColor(gameID, getUsername(authToken)).equals("observer")) {
+            String jsonString = new Gson().toJson(new Error("Can't make move as observer"));
+            session.getRemote().sendString(jsonString);
+            return;
+        }
+        ChessGame.TeamColor moveColor = gameData.game().getBoard().getPiece(chessMove.getStartPosition()).getTeamColor();
+        ChessGame.TeamColor playerColor;
+        if (getColor(gameID, getUsername(authToken)).equals("white")) {
+            playerColor = ChessGame.TeamColor.WHITE;
+        } else if (getColor(gameID, getUsername(authToken)).equals("black")) {
+            playerColor = ChessGame.TeamColor.BLACK;
+        } else {
+            throw new IllegalArgumentException();
+        }
+        if (!playerColor.equals(moveColor)) {
+            String jsonString = new Gson().toJson(new Error("You can't move your opponents pieces"));
+            session.getRemote().sendString(jsonString);
+            return;
+        }
         try {
             gameData.game().makeMove(chessMove);
         } catch (InvalidMoveException e) {
