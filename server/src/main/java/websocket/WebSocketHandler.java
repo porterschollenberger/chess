@@ -1,6 +1,8 @@
 package websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
@@ -11,10 +13,8 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import sql.SQLAuthDAO;
 import sql.SQLGameDAO;
-import websocket.commands.Connect;
-import websocket.commands.Leave;
-import websocket.commands.Resign;
-import websocket.commands.UserGameCommand;
+import websocket.commands.*;
+import websocket.messages.Error;
 import websocket.messages.LoadGame;
 import websocket.messages.Notification;
 
@@ -39,7 +39,17 @@ public class WebSocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
-        var action = new Gson().fromJson(message, UserGameCommand.class);
+        var action = new Gson().fromJson(message, Connect.class);
+        if (authDAO.getAuth(action.getAuthToken()) == null) {
+            String jsonString = new Gson().toJson(new Error("AuthToken is not valid"));
+            session.getRemote().sendString(jsonString);
+            return;
+        }
+        if (gameDAO.getGame(action.getGameID()) == null) {
+            String jsonString = new Gson().toJson(new Error("GameID is not valid"));
+            session.getRemote().sendString(jsonString);
+            return;
+        }
         switch (action.getCommandType()) {
             case CONNECT:
                 Connect connectCommand = new Gson().fromJson(message, Connect.class);
@@ -50,6 +60,8 @@ public class WebSocketHandler {
                 leave(session, leaveCommand.getGameID(), getUsername(leaveCommand.getAuthToken()));
                 break;
             case MAKE_MOVE:
+                MakeMove makeMove = new Gson().fromJson(message, MakeMove.class);
+                makeMove(session, makeMove.getAuthToken(), makeMove.getGameID(), makeMove.getMove());
                 break;
             case RESIGN:
                 Resign resignCommand = new Gson().fromJson(message, Resign.class);
@@ -81,18 +93,44 @@ public class WebSocketHandler {
 
     private void leave(Session session, Integer gameID, String username) throws IOException {
         connections.remove(session);
+//        gameDAO.updateGame(gameID, getColor(gameID, username) + "Username", null);
         String message = String.format("%s left the game", username);
         var notification = new Notification(message);
         connections.broadcast(gameID, notification, session);
     }
 
     private void resign(Session session, Integer gameID, String username) throws IOException {
+        GameData game = gameDAO.getGame(gameID);
+        if (!game.whiteUsername().equals(username) && !game.blackUsername().equals(username)) { // player is observer
+            String jsonString = new Gson().toJson(new Error("Can't resign as an observer"));
+            session.getRemote().sendString(jsonString);
+            return;
+        }
+        if (game.game().getCompletionStatus()) {
+            String jsonString = new Gson().toJson(new Error("Game is over"));
+            session.getRemote().sendString(jsonString);
+            return;
+        }
         String message = String.format("%s resigned", username);
         Notification notification = new Notification(message);
         setGame(gameID, new ChessGame(getGame(gameID).getBoard(), true));
-        LoadGame loadGame = new LoadGame(getGame(gameID));
-        connections.broadcast(gameID, loadGame, null);
         connections.broadcast(gameID, notification, null);
+    }
+
+    private void makeMove(Session session, String authToken, Integer gameID, ChessMove chessMove) throws IOException {
+        GameData gameData = gameDAO.getGame(gameID);
+        try {
+            gameData.game().makeMove(chessMove);
+        } catch (InvalidMoveException e) {
+            String jsonString = new Gson().toJson(new Error("Invalid move"));
+            session.getRemote().sendString(jsonString);
+            return;
+        }
+        gameDAO.updateGame(gameID, gameData.game());
+        LoadGame loadGame = new LoadGame(getGame(gameID));
+        Notification notification = new Notification(String.format("%s made the move %s", getUsername(authToken), chessMove.toString()));
+        connections.broadcast(gameID, loadGame, null);
+        connections.broadcast(gameID, notification, session);
     }
 
     private String getUsername(String authToken) {
